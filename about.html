@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - UAB - The University of Alabama at Birmingham</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --uab-green: #2F5233;
+            --uab-light-green: #3D7041;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-800: #343a40;
+            --light-blue: #eaf4fb;
+            --dark-blue: #004a80;
+            --light-gray: #f7f7f7;
+            --dark-green: #2e7d32;
+            --dark-gray: #4a4a4a;
+            
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Main Header */
+        .main-header {
+            background-color: var(--white);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--uab-green);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .nav-link {
+            color: var(--uab-green);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.7rem 1rem;
+            position: relative;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--white);
+            background-color: var(--uab-green);
+            border-radius: 4px;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--white);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: var(--gray-800);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--gray-100);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .login-link {
+            background-color: var(--uab-green);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .login-link:hover {
+            background-color: var(--uab-light-green);
+            color: var(--white);
+        }
+
+        /* About Page Styles */
+        .about-hero {
+            background-color: var(--);
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .about-hero h1 {
+            font-size: 3rem;
+            color: var(--dark-blue);
+            margin-bottom: 1rem;
+        }
+
+        .about-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .history-section,
+        .vision-section,
+        .impact-section {
+            padding: 4rem 0;
+        }
+
+        .history-section h2,
+        .vision-section h2,
+        .impact-section h2 {
+            font-size: 2.5rem;
+            color: var(--uab-green);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--light-blue);
+            border-radius: 8px;
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            color: var(--uab-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .vision-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .vision-image {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .vision-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .vision-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .values-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .values-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .values-list li::before {
+            content: "•";
+            color: var(--uab-green);
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -0.2rem;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .impact-item {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .impact-item h3 {
+            color: var(--uab-green);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer Styles */
+        .site-footer {
+            background-color: var(--uab-green);
+            color: var(--white);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--white);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--gray-200);
+            text-decoration: underline;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            padding: 0.5rem;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .social-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            .main-nav ul {
+                display: none;
+            }
+            .main-nav.mobile-menu-open ul {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: var(--dark-blue);
+                padding: 1rem;
+            }
+            .nav-link {
+                padding: 0.75rem 1rem;
+            }
+
+            .about-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .about-hero p {
+                font-size: 1rem;
+            }
+
+            .history-section h2,
+            .vision-section h2,
+            .impact-section h2 {
+                font-size: 2rem;
+            }
+
+            .vision-content {
+                flex-direction: column;
+            }
+
+            .vision-image,
+            .vision-text {
+                max-width: 100%;
+            }
+        }
+
+        /* Green Bar Styles */
+        .green-bar {
+            background-color: var(--uab-green);
+            color: var(--white);
+            padding: 0.5rem 0;
+            text-align: center;
+        }
+
+        .marquee {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .marquee span {
+            padding: 0 1rem;
+            display: inline-block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes slideInFromRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .slide-in-right {
+            animation: slideInFromRight 1s ease-out;
+        }
+        .logo {
+            margin-right: 2rem;
+        }
+        .logo-img {
+            width: 100px;
+            height: auto;
+        }
+        .request-info-dropdown .nav-link {
+            padding-right: 1.5rem;
+        }
+
+        .request-info-dropdown .nav-link::after {
+            content: '▼';
+            font-size: 0.7em;
+            margin-left: 0.5rem;
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="/logo.png" alt="UAB Logo" class="logo-img">
+                </a>
+            </div>
+            <button class="mobile-menu-toggle">☰</button>
+            <nav class="main-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="about.html" class="nav-link active">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="portfolio.html" class="nav-link">Portfolio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="departments.html" class="nav-link">Departments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="contact.html" class="nav-link">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Apply</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Visit</a>
+                    </li>
+                    <li class="nav-item request-info-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Request Info</a>
+                        <div class="dropdown-content">
+                            <a href="#">Undergraduate</a>
+                            <a href="#">Graduate</a>
+                            <a href="#">International</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="login.html" class="nav-link login-link">Sign In</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="green-bar">
+        <div class="marquee">
+            <span>Discover Our Rich History and Bright Future at UAB</span>
+        </div>
+    </div>
+
+    <main>
+        <section class="about-hero fade-in">
+            <div class="container">
+                <h1>About UAB</h1>
+                <p>Discover the rich history, innovative vision, and impactful contributions of the University of Alabama at Birmingham.</p>
+            </div>
+        </section>
+
+        <section class="history-section slide-in-right">
+            <div class="container">
+                <h2>Our History</h2>
+                <p>Founded in 1969, UAB has transformed from a small extension center into a doctoral research university and academic medical center. Our institution has been at the forefront of groundbreaking discoveries in medicine, science, and engineering for over five decades.</p>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3>1969</h3>
+                        <p>Year Founded</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>50+</h3>
+                        <p>Years of Excellence</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>100k+</h3>
+                        <p>Alumni Worldwide</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="vision-section fade-in">
+            <div class="container">
+                <h2>Our Vision</h2>
+                <div class="vision-content">
+                    <div class="vision-image">
+                        <img src="/UAB_vision.png" alt="UAB Vision">
+                    </div>
+                    <div class="vision-text">
+                        <p>At UAB, we envision a future where knowledge, innovation, and compassion converge to solve global challenges. Our mission is to be a research university and academic health center that discovers, teaches, and applies knowledge for the intellectual, cultural, social, and economic benefit of Birmingham, the state, and beyond.</p>
+                        <h3>Our Values</h3>
+                        <ul class="values-list">
+                            <li>Integrity</li>
+                            <li>Respect</li>
+                            <li>Diversity and Inclusiveness</li>
+                            <li>Collaboration</li>
+                            <li>Excellence and Achievement</li>
+                            <li>Stewardship</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="impact-section slide-in-right">
+            <div class="container">
+                <h2>Our Impact</h2>
+                <p>UAB's influence extends far beyond our campus, touching lives and driving progress in numerous fields.</p>
+                <div class="impact-grid">
+                    <div class="impact-item">
+                        <h3>Research Breakthroughs</h3>
+                        <p>Our researchers are at the forefront of scientific discovery, from developing new cancer treatments to pioneering advancements in neuroscience.</p>
+                    </div>
+                    <div class="impact-item">
+                        <h3>Community Engagement</h3>
+                        <p>Through outreach programs and partnerships, we're actively improving health outcomes and educational opportunities in our local communities.</p>
+                    </div>
+                    <div class="impact-item">
+                        <h3>Economic Development</h3>
+                        <p>As one of the largest employers in Alabama, UAB contributes significantly to the state's economy and fosters innovation and entrepreneurship.</p>
+                    </div>
+                    <div class="impact-item">
+                        <h3>Global Reach</h3>
+                        <p>Our international collaborations and study abroad programs are expanding UAB's influence on a global scale, preparing students for a interconnected world.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>123 University Road</p>
+                    <p>Bangalore - 560001</p>
+                    <p>Karnataka, India</p>
+                    <p>Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4e272028210e3b2f2c602b2a3b">[email&#160;protected]</a></p>
+                    <p>Phone: +91 80 1234 5678</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="departments.html">Departments</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect With Us</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><img src="/facebook-icon.png" alt="Facebook" class="social-icon"></a>
+                        <a href="#" class="social-link"><img src="/twitter-icon.png" alt="Twitter" class="social-icon"></a>
+                        <a href="#" class="social-link"><img src="/linkedin-icon.png" alt="LinkedIn" class="social-icon"></a>
+                        <a href="#" class="social-link"><img src="/instagram-icon.png" alt="Instagram" class="social-icon"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 UAB. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script.js"></script>
+</body>
+</html>
+

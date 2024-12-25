@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAB Campus Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --uab-green: #2F5233;
+            --uab-light-green: #3D7041;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-800: #343a40;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: var(--gray-100);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: var(--uab-green);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: var(--white);
+            padding: 0.5rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .gallery-item {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>UAB Campus Gallery</h1>
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="/campus1.png" alt="UAB Campus Building" class="gallery-image">
+                <div class="gallery-caption">Main Academic Building</div>
+            </div>
+            <div class="gallery-item">
+                <img src="/campus2.png" alt="UAB Library" class="gallery-image">
+                <div class="gallery-caption">Mervyn H. Sterne Library</div>
+            </div>
+            <div class="gallery-item">
+                <img src="/campus3.png" alt="UAB Green" class="gallery-image">
+                <div class="gallery-caption">Campus Green</div>
+            </div>
+            <div class="gallery-item">
+                <img src="/campus4.png" alt="UAB Research Lab" class="gallery-image">
+                <div class="gallery-caption">State-of-the-art Research Laboratory</div>
+            </div>
+            <div class="gallery-item">
+                <img src="/campus5.png" alt="UAB Student Center" class="gallery-image">
+                <div class="gallery-caption">Hill Student Center</div>
+            </div>
+            <div class="gallery-item">
+                <img src="/campus6.png" alt="UAB Sports Complex" class="gallery-image">
+                <div class="gallery-caption">UAB Sports Complex</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
