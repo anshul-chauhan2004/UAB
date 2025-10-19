@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-    // Define the path to the frontend folder
-    const frontendPath = path.join(__dirname, 'frontend');
+    // Define the path to the public directory
+    const publicPath = path.join(__dirname, 'public');
     
     // Function to serve static files
     const serveStaticFile = (filePath, contentType) => {
@@ -22,23 +22,36 @@ const server = http.createServer((req, res) => {
 
     // Route handling
     if (req.url === '/' || req.url === '/index.html') {
-        serveStaticFile(path.join(frontendPath, 'index.html'), 'text/html');
+        serveStaticFile(path.join(publicPath, 'index.html'), 'text/html');
     } else if (req.url === '/about.html') {
-        serveStaticFile(path.join(frontendPath, 'about.html'), 'text/html');
+        serveStaticFile(path.join(publicPath, 'about.html'), 'text/html');
     } else if (req.url === '/contact.html') {
-        serveStaticFile(path.join(frontendPath, 'contact.html'), 'text/html');
+        serveStaticFile(path.join(publicPath, 'contact.html'), 'text/html');
     } else if (req.url === '/portfolio.html') {
-        serveStaticFile(path.join(frontendPath, 'portfolio.html'), 'text/html');
+        serveStaticFile(path.join(publicPath, 'portfolio.html'), 'text/html');
     } else if (req.url === '/login.html') {
-        serveStaticFile(path.join(frontendPath, 'login.html'), 'text/html');
-    } else if (req.url === '/styles.css') {
-        serveStaticFile(path.join(frontendPath, 'styles.css'), 'text/css');
-    } else if (req.url === '/script.js') {
-        serveStaticFile(path.join(frontendPath, 'script.js'), 'text/javascript');
-    } else if (req.url.startsWith('/assets/')) {
-        // Serve image files
-        const imagePath = path.join(frontendPath, req.url);
-        const contentType = req.url.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
+        serveStaticFile(path.join(publicPath, 'login.html'), 'text/html');
+    } else if (req.url === '/register.html') {
+        serveStaticFile(path.join(publicPath, 'register.html'), 'text/html');
+    } else if (req.url === '/departments.html') {
+        serveStaticFile(path.join(publicPath, 'departments.html'), 'text/html');
+    } else if (req.url === '/gallery.html') {
+        serveStaticFile(path.join(publicPath, 'gallery.html'), 'text/html');
+    } else if (req.url === '/css/main.css') {
+        serveStaticFile(path.join(publicPath, 'css', 'main.css'), 'text/css');
+    } else if (req.url === '/js/script.js') {
+        serveStaticFile(path.join(publicPath, 'js', 'script.js'), 'text/javascript');
+    } else if (req.url.startsWith('/assets/images/')) {
+        // Serve image files with proper content type
+        const imagePath = path.join(publicPath, req.url);
+        let contentType = 'image/png';
+        if (req.url.endsWith('.jpg') || req.url.endsWith('.jpeg')) {
+            contentType = 'image/jpeg';
+        } else if (req.url.endsWith('.gif')) {
+            contentType = 'image/gif';
+        } else if (req.url.endsWith('.ico')) {
+            contentType = 'image/x-icon';
+        }
         serveStaticFile(imagePath, contentType);
     } else if (req.url === '/api/login' && req.method === 'POST') {
         // Handle login POST request
@@ -63,7 +76,7 @@ const server = http.createServer((req, res) => {
     }
 });
 
-const PORT = 3000;
+const PORT = 8080;
 server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
