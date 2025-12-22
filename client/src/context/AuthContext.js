@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -16,52 +15,67 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetchUser(token);
-    } else {
-      setLoading(false);
+    // Check if user is logged in (from localStorage)
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
+    setLoading(false);
   }, []);
-
-  const fetchUser = async (token) => {
-    try {
-      const response = await axios.get('/api/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUser(response.data.user);
-    } catch (error) {
-      localStorage.removeItem('token');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const login = async (credentials) => {
     try {
-      const response = await axios.post('/api/auth/login', credentials);
-      localStorage.setItem('token', response.data.token);
-      setUser(response.data.user);
+      // Simple validation - check if fields are filled
+      if (!credentials.username || !credentials.password) {
+        return { success: false, message: 'Please fill in all fields' };
+      }
+
+      // Demo user for testing (any username/password works)
+      const demoUser = {
+        id: '1',
+        fullName: credentials.username,
+        email: `${credentials.username}@uab.edu`,
+        username: credentials.username,
+        role: 'student',
+        studentId: 'UAB' + Math.floor(Math.random() * 100000),
+        department: 'Computer Science'
+      };
+
+      localStorage.setItem('user', JSON.stringify(demoUser));
+      setUser(demoUser);
       return { success: true };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Login failed' };
+      return { success: false, message: 'Login failed' };
     }
   };
 
   const register = async (userData) => {
     try {
-      const response = await axios.post('/api/auth/register', userData);
-      localStorage.setItem('token', response.data.token);
-      setUser(response.data.user);
+      // Simple validation
+      if (!userData.fullName || !userData.email || !userData.username || !userData.password) {
+        return { success: false, message: 'Please fill in all fields' };
+      }
+
+      const newUser = {
+        id: Date.now().toString(),
+        fullName: userData.fullName,
+        email: userData.email,
+        username: userData.username,
+        role: 'student',
+        studentId: 'UAB' + Math.floor(Math.random() * 100000),
+        department: userData.department || 'Undeclared'
+      };
+
+      localStorage.setItem('user', JSON.stringify(newUser));
+      setUser(newUser);
       return { success: true };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Registration failed' };
+      return { success: false, message: 'Registration failed' };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 

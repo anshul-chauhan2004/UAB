@@ -1,0 +1,104 @@
+[
+  {
+    "id": "1",
+    "name": "School of Engineering",
+    "code": "ENG",
+    "description": "Leading engineering programs focused on innovation and practical application",
+    "head": "Dr. James Martinez",
+    "faculty": [
+      { "name": "Dr. James Martinez", "position": "Dean", "email": "jmartinez@uab.edu" },
+      { "name": "Dr. Sarah Chen", "position": "Professor", "email": "schen@uab.edu" },
+      { "name": "Dr. Michael Roberts", "position": "Associate Professor", "email": "mroberts@uab.edu" }
+    ],
+    "programs": ["Biomedical Engineering", "Civil Engineering", "Electrical and Computer Engineering", "Materials Science and Engineering"],
+    "contactEmail": "engineering@uab.edu",
+    "contactPhone": "(205) 934-5680",
+    "building": "Engineering Building",
+    "image": "/assets/images/box1.png"
+  },
+  {
+    "id": "2",
+    "name": "School of Medicine",
+    "code": "MED",
+    "description": "World-class medical education and research programs",
+    "head": "Dr. Patricia Williams",
+    "faculty": [
+      { "name": "Dr. Patricia Williams", "position": "Dean", "email": "pwilliams@uab.edu" },
+      { "name": "Dr. Robert Johnson", "position": "Professor", "email": "rjohnson@uab.edu" },
+      { "name": "Dr. Emily Zhang", "position": "Professor", "email": "ezhang@uab.edu" }
+    ],
+    "programs": ["Anesthesiology and Perioperative Medicine", "Biochemistry and Molecular Genetics", "Cell, Developmental and Integrative Biology", "Neurology"],
+    "contactEmail": "medicine@uab.edu",
+    "contactPhone": "(205) 934-5681",
+    "building": "Medical Center",
+    "image": "/assets/images/box2.png"
+  },
+  {
+    "id": "3",
+    "name": "College of Arts and Sciences",
+    "code": "CAS",
+    "description": "Diverse academic programs in humanities, social sciences, and natural sciences",
+    "head": "Dr. David Anderson",
+    "faculty": [
+      { "name": "Dr. David Anderson", "position": "Dean", "email": "danderson@uab.edu" },
+      { "name": "Dr. Lisa Brown", "position": "Professor", "email": "lbrown@uab.edu" },
+      { "name": "Dr. Thomas Lee", "position": "Associate Professor", "email": "tlee@uab.edu" }
+    ],
+    "programs": ["Anthropology", "Biology", "Computer Science", "History", "Mathematics", "Physics"],
+    "contactEmail": "cas@uab.edu",
+    "contactPhone": "(205) 934-5682",
+    "building": "Arts and Sciences Complex",
+    "image": "/assets/images/box3.png"
+  },
+  {
+    "id": "4",
+    "name": "School of Business",
+    "code": "BUS",
+    "description": "Comprehensive business education with focus on leadership and innovation",
+    "head": "Dr. Robert Williams",
+    "faculty": [
+      { "name": "Dr. Robert Williams", "position": "Dean", "email": "rwilliams@uab.edu" },
+      { "name": "Dr. Jennifer Taylor", "position": "Professor", "email": "jtaylor@uab.edu" },
+      { "name": "Dr. Mark Davis", "position": "Associate Professor", "email": "mdavis@uab.edu" }
+    ],
+    "programs": ["Accounting and Finance", "Management, Information Systems and Quantitative Methods", "Marketing, Industrial Distribution and Economics"],
+    "contactEmail": "business@uab.edu",
+    "contactPhone": "(205) 934-5683",
+    "building": "Business School",
+    "image": "/assets/images/news1.png"
+  },
+  {
+    "id": "5",
+    "name": "School of Nursing",
+    "code": "NUR",
+    "description": "Excellence in nursing education and healthcare leadership",
+    "head": "Dr. Karen Mitchell",
+    "faculty": [
+      { "name": "Dr. Karen Mitchell", "position": "Dean", "email": "kmitchell@uab.edu" },
+      { "name": "Dr. Susan Clark", "position": "Professor", "email": "sclark@uab.edu" },
+      { "name": "Dr. Maria Garcia", "position": "Associate Professor", "email": "mgarcia@uab.edu" }
+    ],
+    "programs": ["Adult Health Nursing", "Community Health, Outcomes and Systems", "Family, Community and Health Systems"],
+    "contactEmail": "nursing@uab.edu",
+    "contactPhone": "(205) 934-5684",
+    "building": "Nursing Building",
+    "image": "/assets/images/news2.png"
+  },
+  {
+    "id": "6",
+    "name": "School of Public Health",
+    "code": "SPH",
+    "description": "Leading public health programs addressing global health challenges",
+    "head": "Dr. Jonathan Harris",
+    "faculty": [
+      { "name": "Dr. Jonathan Harris", "position": "Dean", "email": "jharris@uab.edu" },
+      { "name": "Dr. Rachel Green", "position": "Professor", "email": "rgreen@uab.edu" },
+      { "name": "Dr. Ahmed Khan", "position": "Associate Professor", "email": "akhan@uab.edu" }
+    ],
+    "programs": ["Biostatistics", "Environmental Health Sciences", "Epidemiology", "Health Behavior"],
+    "contactEmail": "publichealth@uab.edu",
+    "contactPhone": "(205) 934-5685",
+    "building": "Public Health Building",
+    "image": "/assets/images/news3.png"
+  }
+]

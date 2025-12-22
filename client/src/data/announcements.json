@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1",
+    "title": "Spring 2025 Registration Now Open!",
+    "content": "Registration for Spring 2025 semester is now open. Browse courses and enroll through your student dashboard.",
+    "type": "academic",
+    "date": "2024-12-20"
+  },
+  {
+    "id": "2",
+    "title": "Campus Career Fair - February 15th",
+    "content": "Join us for the annual campus career fair on February 15th. Meet recruiters from top companies!",
+    "type": "event",
+    "date": "2024-12-18"
+  },
+  {
+    "id": "3",
+    "title": "Important: Final Exam Schedule Released",
+    "content": "The final examination schedule for Fall 2024 has been posted. Please check your student portal.",
+    "type": "urgent",
+    "date": "2024-12-15"
+  },
+  {
+    "id": "4",
+    "title": "New Research Lab Opening",
+    "content": "The university is proud to announce the opening of a new state-of-the-art research laboratory in the Computer Science department.",
+    "type": "general",
+    "date": "2024-12-10"
+  }
+]

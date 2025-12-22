@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './Courses.css';
+import coursesData from '../data/courses.json';
+import departmentsData from '../data/departments.json';
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -11,34 +12,12 @@ const Courses = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchCourses();
-    fetchDepartments();
+    // Load static data
+    setCourses(coursesData);
+    setFilteredCourses(coursesData);
+    setDepartments(departmentsData);
+    setLoading(false);
   }, []);
-
-  useEffect(() => {
-    filterCourses();
-  }, [selectedDept, searchTerm, courses]);
-
-  const fetchCourses = async () => {
-    try {
-      const response = await axios.get('/api/courses');
-      setCourses(response.data);
-      setFilteredCourses(response.data);
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchDepartments = async () => {
-    try {
-      const response = await axios.get('/api/departments');
-      setDepartments(response.data);
-    } catch (error) {
-      console.error('Error fetching departments:', error);
-    }
-  };
 
   const filterCourses = () => {
     let filtered = courses;
@@ -56,6 +35,11 @@ const Courses = () => {
 
     setFilteredCourses(filtered);
   };
+
+  useEffect(() => {
+    filterCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDept, searchTerm, courses]);
 
   if (loading) {
     return (

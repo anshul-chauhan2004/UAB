@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import './Home.css';
+import announcementsData from '../data/announcements.json';
 
 const Home = () => {
   const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
-    fetchAnnouncements();
+    // Load announcements from static JSON
+    setAnnouncements(announcementsData.slice(0, 3));
   }, []);
-
-  const fetchAnnouncements = async () => {
-    try {
-      const response = await axios.get('/api/announcements');
-      setAnnouncements(response.data.slice(0, 3));
-    } catch (error) {
-      console.error('Error fetching announcements:', error);
-    }
-  };
 
   return (
     <div className="home-page">
@@ -74,14 +66,14 @@ const Home = () => {
             <h2>Latest Announcements</h2>
             <div className="announcements-grid">
               {announcements.map((announcement) => (
-                <div key={announcement._id} className="announcement-card card">
+                <div key={announcement.id} className="announcement-card card">
                   <div className={`announcement-badge ${announcement.type}`}>
                     {announcement.type}
                   </div>
                   <h3>{announcement.title}</h3>
                   <p>{announcement.content}</p>
                   <small>
-                    {new Date(announcement.createdAt).toLocaleDateString()}
+                    {new Date(announcement.date).toLocaleDateString()}
                   </small>
                 </div>
               ))}

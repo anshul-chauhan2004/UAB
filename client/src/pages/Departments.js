@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './Departments.css';
+import departmentsData from '../data/departments.json';
 
 const Departments = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDepartments();
+    // Load static data
+    setDepartments(departmentsData);
+    setLoading(false);
   }, []);
-
-  const fetchDepartments = async () => {
-    try {
-      const response = await axios.get('/api/departments');
-      setDepartments(response.data);
-    } catch (error) {
-      console.error('Error fetching departments:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -42,7 +33,7 @@ const Departments = () => {
       <div className="container">
         <div className="departments-grid">
           {departments.map(dept => (
-            <div key={dept._id} className="department-card card">
+            <div key={dept.id} className="department-card card">
               <img 
                 src={dept.image || '/assets/images/image.png'} 
                 alt={dept.name}
