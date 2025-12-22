@@ -1,0 +1,360 @@
+.library-page {
+  background: #f5f5f5;
+  min-height: 80vh;
+}
+
+.library-header {
+  background: linear-gradient(135deg, #1e5128 0%, #2d7a3e 100%);
+  color: white;
+  padding: 60px 0;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.library-header h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.library-intro {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.library-intro h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.library-intro p {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.library-services {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.library-services h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.service-card {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 2px solid #81c784;
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1e5128 0%, #4caf50 100%);
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(30, 81, 40, 0.3);
+  border-color: #66bb6a;
+}
+
+.service-icon {
+  font-size: 52px;
+  margin-bottom: 15px;
+}
+
+.service-card h3 {
+  color: #1e5128;
+  font-size: 22px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.service-card p {
+  color: #2d5a3d;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.library-locations {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.library-locations h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.locations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.location-card {
+  background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+  border: 2px solid #aed581;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.location-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2d7a3e 0%, #66bb6a 100%);
+}
+
+.location-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(30, 81, 40, 0.2);
+  border-color: #9ccc65;
+}
+
+.location-card h3 {
+  color: #1e5128;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.location-info p {
+  color: #33691e;
+  padding: 8px 0;
+  font-size: 15px;
+}
+
+.location-info strong {
+  color: #1e5128;
+}
+
+.location-card .btn {
+  margin-top: 15px;
+  width: 100%;
+}
+
+.digital-resources {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.digital-resources h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.resource-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 2px solid #64b5f6;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+}
+
+.resource-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2);
+  border-color: #42a5f5;
+}
+
+.resource-card h3 {
+  color: #0d47a1;
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.resource-card p {
+  color: #1565c0;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.resource-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.resource-card li {
+  padding: 8px 0 8px 25px;
+  color: #1976d2;
+  position: relative;
+  font-weight: 500;
+}
+
+.resource-card li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #1565c0;
+  font-weight: bold;
+}
+
+.library-tools {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.library-tools h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.tool-card {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  border: 2px solid #ffb74d;
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.tool-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(255, 152, 0, 0.2);
+  border-color: #ffa726;
+}
+
+.tool-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.tool-card h3 {
+  color: #e65100;
+  font-size: 20px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.tool-card p {
+  color: #bf360c;
+  line-height: 1.6;
+}
+
+.library-contact {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.library-contact h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.contact-card {
+  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+  border: 2px solid #ba68c8;
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(156, 39, 176, 0.2);
+  border-color: #ab47bc;
+}
+
+.contact-card h3 {
+  color: #6a1b9a;
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.contact-card p {
+  color: #7b1fa2;
+  padding: 8px 0;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .library-header h1 {
+    font-size: 32px;
+  }
+  
+  .services-grid,
+  .locations-grid,
+  .resources-grid,
+  .tools-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .library-intro,
+  .library-services,
+  .library-locations,
+  .digital-resources,
+  .library-tools,
+  .library-contact {
+    padding: 30px 20px;
+  }
+}

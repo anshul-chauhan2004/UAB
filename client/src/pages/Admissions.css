@@ -1,0 +1,391 @@
+.admissions-page {
+  background: #f5f5f5;
+  min-height: 80vh;
+}
+
+.admissions-header {
+  background: linear-gradient(135deg, #1e5128 0%, #2d7a3e 100%);
+  color: white;
+  padding: 60px 0;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.admissions-header h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.admissions-section {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.admissions-section h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.admissions-section p {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.process-section {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.process-section h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.step-card {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 2px solid #81c784;
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1e5128 0%, #4caf50 100%);
+}
+
+.step-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(30, 81, 40, 0.25);
+  border-color: #66bb6a;
+}
+
+.step-number {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #1e5128 0%, #2d7a3e 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0 auto 20px;
+  box-shadow: 0 4px 12px rgba(30, 81, 40, 0.3);
+}
+
+.step-card h3 {
+  color: #1e5128;
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.step-card p {
+  color: #2d5a3d;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.requirements-section {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.requirements-section h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.requirements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.requirement-card {
+  background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+  border: 2px solid #aed581;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.requirement-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2d7a3e 0%, #66bb6a 100%);
+}
+
+.requirement-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(30, 81, 40, 0.2);
+  border-color: #9ccc65;
+}
+
+.requirement-card h3 {
+  color: #1e5128;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.requirement-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.requirement-card li {
+  padding: 10px 0 10px 30px;
+  color: #33691e;
+  line-height: 1.6;
+  position: relative;
+  font-weight: 500;
+}
+
+.requirement-card li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #2d7a3e;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.deadlines-section {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.deadlines-section h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.deadlines-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.deadline-card {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  border: 2px solid #ffb74d;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+}
+
+.deadline-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(255, 152, 0, 0.2);
+  border-color: #ffa726;
+}
+
+.deadline-card h3 {
+  color: #e65100;
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.deadline-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #ffcc80;
+}
+
+.deadline-item:last-child {
+  border-bottom: none;
+}
+
+.deadline-label {
+  color: #bf360c;
+  font-weight: 600;
+}
+
+.deadline-date {
+  color: #e65100;
+  font-weight: 700;
+}
+
+.financial-section {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.financial-section h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.financial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.financial-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 2px solid #64b5f6;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+}
+
+.financial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2);
+  border-color: #42a5f5;
+}
+
+.financial-card h3 {
+  color: #0d47a1;
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.tuition-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #90caf9;
+  color: #1565c0;
+}
+
+.tuition-item:last-of-type {
+  border-bottom: none;
+  margin-bottom: 20px;
+}
+
+.tuition-item strong {
+  color: #0d47a1;
+  font-weight: 700;
+}
+
+.financial-card ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.financial-card li {
+  padding: 10px 0 10px 30px;
+  color: #1565c0;
+  position: relative;
+  font-weight: 500;
+}
+
+.financial-card li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #1976d2;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.contact-admissions {
+  background: linear-gradient(135deg, #1e5128 0%, #2d7a3e 100%);
+  color: white;
+  padding: 50px;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.contact-admissions h2 {
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.contact-admissions p {
+  font-size: 18px;
+  margin-bottom: 30px;
+  opacity: 0.95;
+}
+
+.contact-info {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  backdrop-filter: blur(10px);
+}
+
+.contact-item {
+  padding: 10px 0;
+  font-size: 16px;
+}
+
+.contact-item strong {
+  margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+  .admissions-header h1 {
+    font-size: 32px;
+  }
+  
+  .process-steps,
+  .requirements-grid,
+  .deadlines-grid,
+  .financial-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admissions-section,
+  .process-section,
+  .requirements-section,
+  .deadlines-section,
+  .financial-section {
+    padding: 30px 20px;
+  }
+}

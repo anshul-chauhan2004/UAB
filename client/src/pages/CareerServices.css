@@ -1,0 +1,479 @@
+.career-services-page {
+  background: #f5f5f5;
+  min-height: 80vh;
+}
+
+.career-header {
+  background: linear-gradient(135deg, #1e5128 0%, #2d7a3e 100%);
+  color: white;
+  padding: 60px 0;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.career-header h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.career-intro {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.career-intro h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.career-intro p {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.career-services-section {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.career-services-section h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.career-services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.career-service-card {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 2px solid #81c784;
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.career-service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1e5128 0%, #4caf50 100%);
+}
+
+.career-service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(30, 81, 40, 0.3);
+  border-color: #66bb6a;
+}
+
+.career-icon {
+  font-size: 52px;
+  margin-bottom: 15px;
+}
+
+.career-service-card h3 {
+  color: #1e5128;
+  font-size: 22px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.career-service-card p {
+  color: #2d5a3d;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.upcoming-events {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.upcoming-events h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.event-card {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  border: 2px solid #ffb74d;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(255, 152, 0, 0.2);
+  border-color: #ffa726;
+}
+
+.event-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #e65100;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.event-card h3 {
+  color: #e65100;
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 700;
+  padding-right: 80px;
+}
+
+.event-date,
+.event-location {
+  color: #bf360c;
+  font-weight: 600;
+  padding: 5px 0;
+}
+
+.event-description {
+  color: #e65100;
+  line-height: 1.6;
+  margin: 15px 0 20px;
+}
+
+.resources-section {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.resources-section h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.resources-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.resource-item {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 2px solid #64b5f6;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+}
+
+.resource-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2);
+  border-color: #42a5f5;
+}
+
+.resource-item h3 {
+  color: #0d47a1;
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.resource-item p {
+  color: #1565c0;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.resource-item ul {
+  list-style: none;
+  padding: 0;
+}
+
+.resource-item li {
+  padding: 8px 0 8px 25px;
+  color: #1976d2;
+  position: relative;
+  font-weight: 500;
+}
+
+.resource-item li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #1565c0;
+  font-weight: bold;
+}
+
+.employer-section {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.employer-section h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.employer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.employer-card {
+  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+  border: 2px solid #ba68c8;
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.employer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(156, 39, 176, 0.2);
+  border-color: #ab47bc;
+}
+
+.employer-card h3 {
+  color: #6a1b9a;
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.employer-card p {
+  color: #7b1fa2;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.success-stories {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.success-stories h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.stories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.story-card {
+  background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+  border: 2px solid #aed581;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.story-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(30, 81, 40, 0.2);
+  border-color: #9ccc65;
+}
+
+.quote-icon {
+  font-size: 48px;
+  color: #558b2f;
+  line-height: 0.5;
+  margin-bottom: 15px;
+}
+
+.story-text {
+  color: #33691e;
+  line-height: 1.7;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.story-author {
+  color: #1e5128;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.story-role {
+  color: #558b2f;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.career-contact {
+  background: white;
+  padding: 40px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}
+
+.career-contact h2 {
+  color: #1e5128;
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.career-contact-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.contact-details {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 2px solid #81c784;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+}
+
+.contact-details:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(30, 81, 40, 0.2);
+  border-color: #66bb6a;
+}
+
+.contact-details h3 {
+  color: #1e5128;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.contact-details p {
+  color: #2d5a3d;
+  padding: 8px 0;
+  font-weight: 500;
+}
+
+.contact-details strong {
+  color: #1e5128;
+}
+
+.contact-details .btn {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.quick-links {
+  background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+  border: 2px solid #aed581;
+  border-radius: 15px;
+  padding: 30px;
+  transition: all 0.3s ease;
+}
+
+.quick-links:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(30, 81, 40, 0.2);
+  border-color: #9ccc65;
+}
+
+.quick-links h3 {
+  color: #1e5128;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.quick-links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.quick-links li {
+  padding: 10px 0;
+  border-bottom: 1px solid #c5e1a5;
+}
+
+.quick-links li:last-child {
+  border-bottom: none;
+}
+
+.quick-links a {
+  color: #2d5a3d;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.quick-links a:hover {
+  color: #1e5128;
+}
+
+@media (max-width: 768px) {
+  .career-header h1 {
+    font-size: 32px;
+  }
+  
+  .career-services-grid,
+  .events-grid,
+  .resources-cards,
+  .employer-grid,
+  .stories-grid,
+  .career-contact-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .career-intro,
+  .career-services-section,
+  .upcoming-events,
+  .resources-section,
+  .employer-section,
+  .success-stories,
+  .career-contact {
+    padding: 30px 20px;
+  }
+  
+  .event-card h3 {
+    padding-right: 0;
+    margin-top: 40px;
+  }
+}

@@ -1,0 +1,232 @@
+.home-page {
+  width: 100%;
+}
+
+.hero {
+  position: relative;
+  margin-bottom: 60px;
+}
+
+.hero-image {
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+}
+
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-content {
+  max-width: 1200px;
+  margin: -100px auto 0;
+  position: relative;
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 48px;
+  color: #1e5128;
+  margin-bottom: 20px;
+}
+
+.hero-text {
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  color: #555;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.info-section {
+  padding: 60px 0;
+  background: #f8f9fa;
+}
+
+.info-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.info-header h2 {
+  font-size: 36px;
+  color: #1e5128;
+  margin-bottom: 10px;
+}
+
+.info-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.info-box {
+  text-align: center;
+}
+
+.info-box img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+  margin: -20px -20px 20px;
+}
+
+.info-box h3 {
+  color: #1e5128;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.announcements-section {
+  padding: 60px 0;
+}
+
+.announcements-section h2 {
+  text-align: center;
+  font-size: 36px;
+  color: #1e5128;
+  margin-bottom: 40px;
+}
+
+.announcements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.announcement-card {
+  position: relative;
+  padding: 50px 30px 30px;
+  background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
+  border-radius: 15px;
+  border: 2px solid #c8e6c9;
+  box-shadow: 0 4px 12px rgba(30, 81, 40, 0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 220px;
+  overflow: hidden;
+}
+
+.announcement-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #1e5128 0%, #4caf50 100%);
+}
+
+.announcement-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(30, 81, 40, 0.25);
+  border-color: #81c784;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+}
+
+.announcement-card h3 {
+  font-size: 19px;
+  color: #1e5128;
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 700;
+  word-wrap: break-word;
+  hyphens: auto;
+  padding-right: 10px;
+}
+
+.announcement-card p {
+  flex: 1;
+  margin: 0;
+  color: #2d5a3d;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.announcement-card small {
+  color: #4a7c59;
+  font-size: 13px;
+  margin-top: auto;
+  font-weight: 600;
+}
+
+.announcement-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.announcement-badge.general { background: #e3f2fd; color: #1976d2; }
+.announcement-badge.academic { background: #f3e5f5; color: #7b1fa2; }
+.announcement-badge.event { background: #e8f5e9; color: #388e3c; }
+.announcement-badge.urgent { background: #ffebee; color: #c62828; }
+
+.cta-section {
+  background: linear-gradient(135deg, #1e5128 0%, #2d7a3e 100%);
+  color: white;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.cta-section h2 {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.cta-section p {
+  font-size: 20px;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.cta-section .btn {
+  background: white;
+  color: #1e5128;
+  font-weight: 600;
+}
+
+.cta-section .btn:hover {
+  background: #f0f0f0;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .hero-image {
+    height: 300px;
+  }
+
+  .hero-content {
+    margin: -50px 20px 0;
+    padding: 30px 20px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .hero-text {
+    font-size: 16px;
+  }
+}
