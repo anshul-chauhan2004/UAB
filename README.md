@@ -1,4 +1,4 @@
-# UAB Institute Management System - React Edition
+# UAB Institute Management System 
 
 A modern, static React-based Institute Management System for The University of Alabama at Birmingham. Features comprehensive student/faculty dashboards, course management, authentication system, and dynamic announcements - all powered by client-side React with JSON data storage.
 
