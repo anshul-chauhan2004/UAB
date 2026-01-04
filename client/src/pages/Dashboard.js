@@ -55,15 +55,6 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-page">
-      <div className="dashboard-header">
-        <div className="container">
-          <h1>Welcome back, {user?.fullName}!</h1>
-          <p className="student-info">
-            Student ID: {user?.studentId} | Department: {user?.department}
-          </p>
-        </div>
-      </div>
-
       <div className="container">
         <div className="dashboard-tabs">
           <button 

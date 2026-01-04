@@ -1,16 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const Announcement = require('../models/Announcement');
+const { randomUUID } = require('crypto');
+const pool = require('../../database/config');
 
 // Get all announcements
 router.get('/', async (req, res) => {
   try {
-    const announcements = await Announcement.find({ isActive: true })
-      .sort({ createdAt: -1 })
-      .limit(20)
-      .populate('author', 'fullName');
-    
-    res.json(announcements);
+    const [rows] = await pool.query(
+      'SELECT id, title, content, department, author, createdAt FROM announcements ORDER BY createdAt DESC LIMIT 20'
+    );
+    res.json(rows);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -19,9 +18,13 @@ router.get('/', async (req, res) => {
 // Create announcement
 router.post('/', async (req, res) => {
   try {
-    const announcement = new Announcement(req.body);
-    await announcement.save();
-    res.status(201).json(announcement);
+    const { title, content, department, author } = req.body;
+    const id = randomUUID();
+    await pool.query(
+      'INSERT INTO announcements (id, title, content, department, author) VALUES (?, ?, ?, ?, ?)',
+      [id, title, content, department || null, author || 'Admin']
+    );
+    res.status(201).json({ id, title, content, department: department || null, author: author || 'Admin' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

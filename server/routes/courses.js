@@ -1,18 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const Course = require('../models/Course');
+const { randomUUID } = require('crypto');
+const pool = require('../../database/config');
 
 // Get all courses
 router.get('/', async (req, res) => {
   try {
-    const { department, semester } = req.query;
-    const filter = {};
-    
-    if (department) filter.department = department;
-    if (semester) filter.semester = semester;
-
-    const courses = await Course.find(filter).sort({ courseCode: 1 });
-    res.json(courses);
+    const { department, semester, stream } = req.query;
+    const where = [];
+    const params = [];
+    if (department) { where.push('department = ?'); params.push(department); }
+    if (semester) { where.push('semester = ?'); params.push(semester); }
+    if (stream) { where.push('stream = ?'); params.push(stream); }
+    const sql = `SELECT id, courseCode, courseName, instructor, instructorEmail, department, semester, credits, stream, capacity, enrolled, description FROM courses ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY courseCode ASC`;
+    const [rows] = await pool.query(sql, params);
+    res.json(rows);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -21,22 +23,26 @@ router.get('/', async (req, res) => {
 // Get course by ID
 router.get('/:id', async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id);
-    if (!course) {
+    const [rows] = await pool.query('SELECT id, courseCode, courseName, instructor, instructorEmail, department, semester, credits, stream, capacity, enrolled, description FROM courses WHERE id = ? LIMIT 1', [req.params.id]);
+    if (rows.length === 0) {
       return res.status(404).json({ message: 'Course not found' });
     }
-    res.json(course);
+    res.json(rows[0]);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Create course (admin only)
+// Create course (teachers can add courses)
 router.post('/', async (req, res) => {
   try {
-    const course = new Course(req.body);
-    await course.save();
-    res.status(201).json(course);
+    const { courseCode, courseName, instructor, instructorEmail, department, semester, credits, stream, capacity, description } = req.body;
+    const id = randomUUID();
+    await pool.query(
+      'INSERT INTO courses (id, courseCode, courseName, instructor, instructorEmail, department, semester, credits, stream, capacity, enrolled, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [id, courseCode, courseName, instructor, instructorEmail || null, department, semester, credits || 4, stream || null, capacity || 60, 0, description || null]
+    );
+    res.status(201).json({ id, courseCode, courseName, instructor, instructorEmail, department, semester, credits, stream, capacity, enrolled: 0, description });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -45,15 +51,18 @@ router.post('/', async (req, res) => {
 // Update course
 router.put('/:id', async (req, res) => {
   try {
-    const course = await Course.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!course) {
-      return res.status(404).json({ message: 'Course not found' });
-    }
-    res.json(course);
+    const fields = ['courseCode','courseName','instructor','instructorEmail','department','semester','credits','stream','capacity','description'];
+    const sets = [];
+    const params = [];
+    fields.forEach(f => {
+      if (req.body[f] !== undefined) { sets.push(`${f} = ?`); params.push(req.body[f]); }
+    });
+    if (sets.length === 0) return res.status(400).json({ message: 'No fields to update' });
+    params.push(req.params.id);
+    const [result] = await pool.query(`UPDATE courses SET ${sets.join(', ')} WHERE id = ?`, params);
+    if (result.affectedRows === 0) return res.status(404).json({ message: 'Course not found' });
+    const [rows] = await pool.query('SELECT id, courseCode, courseName, instructor, instructorEmail, department, semester, credits, stream, capacity, enrolled, description FROM courses WHERE id = ? LIMIT 1', [req.params.id]);
+    res.json(rows[0]);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -62,8 +71,8 @@ router.put('/:id', async (req, res) => {
 // Delete course
 router.delete('/:id', async (req, res) => {
   try {
-    const course = await Course.findByIdAndDelete(req.params.id);
-    if (!course) {
+    const [result] = await pool.query('DELETE FROM courses WHERE id = ?', [req.params.id]);
+    if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Course not found' });
     }
     res.json({ message: 'Course deleted successfully' });
@@ -75,19 +84,17 @@ router.delete('/:id', async (req, res) => {
 // Enroll in course
 router.post('/:id/enroll', async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id);
-    if (!course) {
+    const courseId = req.params.id;
+    const [rows] = await pool.query('SELECT capacity, enrolled, courseCode, courseName FROM courses WHERE id = ? LIMIT 1', [courseId]);
+    if (rows.length === 0) {
       return res.status(404).json({ message: 'Course not found' });
     }
-
+    const course = rows[0];
     if (course.enrolled >= course.capacity) {
       return res.status(400).json({ message: 'Course is full' });
     }
-
-    course.enrolled += 1;
-    await course.save();
-
-    res.json({ message: 'Enrolled successfully', course });
+    await pool.query('UPDATE courses SET enrolled = enrolled + 1 WHERE id = ?', [courseId]);
+    res.json({ message: 'Enrolled successfully', course: { ...course, enrolled: course.enrolled + 1 } });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

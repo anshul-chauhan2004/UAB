@@ -37,6 +37,18 @@
   padding: 15px 20px;
 }
 
+.dashboard-title {
+  flex: 1;
+  text-align: center;
+}
+
+.dashboard-title h2 {
+  margin: 0;
+  color: #1e5128;
+  font-size: 24px;
+  font-weight: 600;
+}
+
 .logo-img {
   height: 60px;
   width: auto;

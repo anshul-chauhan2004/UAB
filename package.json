@@ -11,22 +11,28 @@
     "seed": "node server/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["react", "institute-management", "education"],
+  "keywords": [
+    "react",
+    "institute-management",
+    "education"
+  ],
   "author": "",
   "license": "ISC",
   "description": "UAB Institute Management System with React",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.2",
     "multer": "^1.4.5-lts.1",
-    "cors": "^2.8.5",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "dotenv": "^16.3.1"
+    "mysql2": "^3.16.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9",
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.9"
   }
 }

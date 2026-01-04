@@ -10,7 +10,9 @@ const Register = () => {
     username: '',
     password: '',
     confirmPassword: '',
-    department: ''
+    role: 'student',
+    department: '',
+    stream: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,6 +30,17 @@ const Register = () => {
     'Arts & Sciences',
     'Public Health'
   ];
+
+  const streams = {
+    'Computer Science': ['Software Engineering', 'Data Science', 'Cybersecurity', 'AI/ML'],
+    'Engineering': ['Civil Engineering', 'Mechanical Engineering', 'Electrical Engineering', 'Biomedical Engineering'],
+    'Business Administration': ['Finance', 'Marketing', 'Management', 'Accounting'],
+    'Medicine': ['General Medicine', 'Surgery', 'Pediatrics', 'Cardiology'],
+    'Nursing': ['General Nursing', 'Pediatric Nursing', 'Critical Care', 'Community Health'],
+    'Education': ['Elementary Education', 'Secondary Education', 'Special Education', 'Educational Leadership'],
+    'Arts & Sciences': ['Biology', 'Chemistry', 'Physics', 'Mathematics', 'English', 'History'],
+    'Public Health': ['Epidemiology', 'Health Policy', 'Environmental Health', 'Biostatistics']
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -76,6 +89,20 @@ const Register = () => {
           {error && <div className="alert alert-error">{error}</div>}
           
           <form onSubmit={handleSubmit} className="register-form">
+            <div className="form-group">
+              <label htmlFor="role">Register As *</label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                required
+              >
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+              </select>
+            </div>
+
             <div className="form-group">
               <label htmlFor="fullName">Full Name *</label>
               <input
@@ -130,6 +157,24 @@ const Register = () => {
                 ))}
               </select>
             </div>
+
+            {formData.role === 'student' && formData.department && (
+              <div className="form-group">
+                <label htmlFor="stream">Stream/Specialization *</label>
+                <select
+                  id="stream"
+                  name="stream"
+                  value={formData.stream}
+                  onChange={handleChange}
+                  required={formData.role === 'student'}
+                >
+                  <option value="">Select your stream</option>
+                  {streams[formData.department]?.map(stream => (
+                    <option key={stream} value={stream}>{stream}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             
             <div className="form-row">
               <div className="form-group">

@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -15,68 +16,73 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in (from localStorage)
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    // Restore session within the tab using sessionStorage
+    const stored = sessionStorage.getItem('user');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setUser(parsed);
+      } catch {
+        sessionStorage.removeItem('user');
+      }
     }
     setLoading(false);
   }, []);
 
   const login = async (credentials) => {
     try {
-      // Simple validation - check if fields are filled
+      // Validate input
       if (!credentials.username || !credentials.password) {
         return { success: false, message: 'Please fill in all fields' };
       }
 
-      // Demo user for testing (any username/password works)
-      const demoUser = {
-        id: '1',
-        fullName: credentials.username,
-        email: `${credentials.username}@uab.edu`,
+      // Call backend for verification
+      const res = await axios.post('/api/auth/login', {
         username: credentials.username,
-        role: 'student',
-        studentId: 'UAB' + Math.floor(Math.random() * 100000),
-        department: 'Computer Science'
-      };
+        password: credentials.password
+      });
 
-      localStorage.setItem('user', JSON.stringify(demoUser));
-      setUser(demoUser);
+      const { user: serverUser, token } = res.data;
+      const sessionUser = { ...serverUser, token };
+      setUser(sessionUser);
+      sessionStorage.setItem('user', JSON.stringify(sessionUser));
       return { success: true };
     } catch (error) {
-      return { success: false, message: 'Login failed' };
+      const message = error?.response?.data?.message || 'Login failed';
+      return { success: false, message };
     }
   };
 
   const register = async (userData) => {
     try {
-      // Simple validation
+      // Validate input
       if (!userData.fullName || !userData.email || !userData.username || !userData.password) {
         return { success: false, message: 'Please fill in all fields' };
       }
 
-      const newUser = {
-        id: Date.now().toString(),
+      const res = await axios.post('/api/auth/register', {
         fullName: userData.fullName,
         email: userData.email,
         username: userData.username,
-        role: 'student',
-        studentId: 'UAB' + Math.floor(Math.random() * 100000),
-        department: userData.department || 'Undeclared'
-      };
+        password: userData.password,
+        role: userData.role || 'student',
+        department: userData.department
+      });
 
-      localStorage.setItem('user', JSON.stringify(newUser));
-      setUser(newUser);
+      const { user: serverUser, token } = res.data;
+      const sessionUser = { ...serverUser, token };
+      setUser(sessionUser);
+      sessionStorage.setItem('user', JSON.stringify(sessionUser));
       return { success: true };
     } catch (error) {
-      return { success: false, message: 'Registration failed' };
+      const message = error?.response?.data?.message || 'Registration failed';
+      return { success: false, message };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
     setUser(null);
+    sessionStorage.removeItem('user');
   };
 
   const value = {

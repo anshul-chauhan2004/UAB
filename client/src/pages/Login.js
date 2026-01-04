@@ -6,7 +6,9 @@ import './Login.css';
 const Login = () => {
   const [formData, setFormData] = useState({
     username: '',
-    password: ''
+    password: '',
+    role: 'student',
+    department: 'Computer Science'
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -48,6 +50,38 @@ const Login = () => {
           {error && <div className="alert alert-error">{error}</div>}
           
           <form onSubmit={handleSubmit} className="login-form">
+            <div className="form-group">
+              <label htmlFor="role">Login As</label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                required
+              >
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="department">Department</label>
+              <select
+                id="department"
+                name="department"
+                value={formData.department}
+                onChange={handleChange}
+                required
+              >
+                <option value="Computer Science">Computer Science</option>
+                <option value="Electrical Engineering">Electrical Engineering</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Electronics and Communication">Electronics and Communication</option>
+              </select>
+            </div>
+
             <div className="form-group">
               <label htmlFor="username">Username or Email</label>
               <input

@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import './Header.css';
 
 const Header = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -29,44 +28,16 @@ const Header = () => {
             </Link>
           </div>
           
-          <button 
-            className="mobile-menu-toggle"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            ☰
-          </button>
+          {isAuthenticated && (
+            <div className="dashboard-title">
+              <h2>{user?.role === 'teacher' ? 'Teacher Dashboard' : 'Student Dashboard'}</h2>
+            </div>
+          )}
 
-          <nav className={`main-nav ${mobileMenuOpen ? 'active' : ''}`}>
+          <nav className="main-nav">
             <ul>
-              <li className="nav-item">
-                <Link to="/" className="nav-link">Home</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/about" className="nav-link">About</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/courses" className="nav-link">Courses</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/departments" className="nav-link">Departments</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/gallery" className="nav-link">Gallery</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/portfolio" className="nav-link">Portfolio</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/contact" className="nav-link">Contact</Link>
-              </li>
               {isAuthenticated ? (
                 <>
-                  <li className="nav-item">
-                    <Link to="/dashboard" className="nav-link">Dashboard</Link>
-                  </li>
-                  <li className="nav-item">
-                    <span className="nav-link user-name">Hi, {user?.fullName?.split(' ')[0]}</span>
-                  </li>
                   <li className="nav-item">
                     <button onClick={handleLogout} className="nav-link logout-btn">
                       Logout
@@ -74,9 +45,32 @@ const Header = () => {
                   </li>
                 </>
               ) : (
-                <li className="nav-item">
-                  <Link to="/login" className="nav-link login-link">Sign In</Link>
-                </li>
+                <>
+                  <li className="nav-item">
+                    <Link to="/" className="nav-link">Home</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/about" className="nav-link">About</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/courses" className="nav-link">Courses</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/departments" className="nav-link">Departments</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/gallery" className="nav-link">Gallery</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/portfolio" className="nav-link">Portfolio</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/contact" className="nav-link">Contact</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/login" className="nav-link login-link">Sign In</Link>
+                  </li>
+                </>
               )}
             </ul>
           </nav>

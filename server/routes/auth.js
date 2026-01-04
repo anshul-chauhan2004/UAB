@@ -1,38 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const { randomUUID } = require('crypto');
+const pool = require('../../database/config');
 
 // Register
 router.post('/register', async (req, res) => {
   try {
-    const { fullName, email, username, password, role, department } = req.body;
+    const { fullName, email, username, password, role, department, stream } = req.body;
 
-    // Check if user exists
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-    if (existingUser) {
+    if (!fullName || !email || !username || !password) {
+      return res.status(400).json({ message: 'Please fill in all required fields' });
+    }
+
+    // Check if user exists (email or username)
+    const [existing] = await pool.query(
+      'SELECT id FROM users WHERE email = ? OR username = ? LIMIT 1',
+      [email, username]
+    );
+    if (existing.length > 0) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create student ID
-    const studentId = 'UAB' + Date.now().toString().slice(-6);
+    const id = randomUUID();
+    const hashed = await bcrypt.hash(password, 10);
+    const userRole = role || 'student';
+    const studentId = userRole === 'student' ? 'UAB' + Date.now().toString().slice(-6) : null;
+    const teacherId = userRole === 'teacher' ? 'T' + Date.now().toString().slice(-4) : null;
 
-    // Create user
-    const user = new User({
-      fullName,
-      email,
-      username,
-      password,
-      role: role || 'student',
-      studentId,
-      department
-    });
+    await pool.query(
+      `INSERT INTO users (id, fullName, email, username, password, role, department, stream, studentId, teacherId) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [id, fullName, email, username, hashed, userRole, department || null, stream || null, studentId, teacherId]
+    );
 
-    await user.save();
-
-    // Create token
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: id, role: userRole },
       process.env.JWT_SECRET || 'secret',
       { expiresIn: '7d' }
     );
@@ -41,17 +45,27 @@ router.post('/register', async (req, res) => {
       message: 'User registered successfully',
       token,
       user: {
-        id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        username: user.username,
-        role: user.role,
-        studentId: user.studentId,
-        department: user.department
+        id,
+        fullName,
+        email,
+        username,
+        role: userRole,
+        studentId,
+        teacherId,
+        department: department || null,
+        stream: stream || null
       }
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    let message = 'Server error';
+    if (error?.code === 'ER_DUP_ENTRY') {
+      message = 'Email or username already exists';
+    } else if (error?.sqlMessage) {
+      message = error.sqlMessage;
+    } else if (error?.message) {
+      message = error.message;
+    }
+    res.status(500).json({ message, error: error?.code || 'UNKNOWN_ERROR' });
   }
 });
 
@@ -60,21 +74,22 @@ router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Find user
-    const user = await User.findOne({ $or: [{ username }, { email: username }] });
-    if (!user) {
+    const [rows] = await pool.query(
+      'SELECT id, fullName, email, username, password, role, department, stream, studentId, teacherId FROM users WHERE username = ? OR email = ? LIMIT 1',
+      [username, username]
+    );
+    if (rows.length === 0) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Check password
-    const isMatch = await user.comparePassword(password);
+    const user = rows[0];
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Create token
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user.id, role: user.role },
       process.env.JWT_SECRET || 'secret',
       { expiresIn: '7d' }
     );
@@ -83,17 +98,21 @@ router.post('/login', async (req, res) => {
       message: 'Login successful',
       token,
       user: {
-        id: user._id,
+        id: user.id,
         fullName: user.fullName,
         email: user.email,
         username: user.username,
         role: user.role,
         studentId: user.studentId,
-        department: user.department
+        teacherId: user.teacherId,
+        department: user.department,
+        stream: user.stream
       }
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    let message = 'Server error';
+    if (error?.message) message = error.message;
+    res.status(500).json({ message });
   }
 });
 
@@ -106,12 +125,15 @@ router.get('/me', async (req, res) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-    const user = await User.findById(decoded.userId).select('-password');
-
-    if (!user) {
+    const [rows] = await pool.query(
+      'SELECT id, fullName, email, username, role, department, stream, studentId, teacherId FROM users WHERE id = ? LIMIT 1',
+      [decoded.userId]
+    );
+    if (rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    const user = rows[0];
     res.json({ user });
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' });

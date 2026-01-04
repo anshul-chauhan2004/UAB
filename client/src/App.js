@@ -10,7 +10,7 @@ import Departments from './pages/Departments';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
+import RoleDashboard from './components/RoleDashboard';
 import Courses from './pages/Courses';
 import Gallery from './pages/Gallery';
 import Admissions from './pages/Admissions';
@@ -49,7 +49,7 @@ function App() {
                 path="/dashboard" 
                 element={
                   <ProtectedRoute>
-                    <Dashboard />
+                    <RoleDashboard />
                   </ProtectedRoute>
                 } 
               />

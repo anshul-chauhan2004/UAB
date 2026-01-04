@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Department = require('../models/Department');
+const { randomUUID } = require('crypto');
+const pool = require('../../database/config');
 
 // Get all departments
 router.get('/', async (req, res) => {
   try {
-    const departments = await Department.find().sort({ name: 1 });
-    res.json(departments);
+    const [rows] = await pool.query('SELECT id, name, code, description, head, contactEmail, contactPhone, building FROM departments ORDER BY name ASC');
+    res.json(rows);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -15,11 +16,11 @@ router.get('/', async (req, res) => {
 // Get department by ID
 router.get('/:id', async (req, res) => {
   try {
-    const department = await Department.findById(req.params.id);
-    if (!department) {
+    const [rows] = await pool.query('SELECT id, name, code, description, head, contactEmail, contactPhone, building FROM departments WHERE id = ? LIMIT 1', [req.params.id]);
+    if (rows.length === 0) {
       return res.status(404).json({ message: 'Department not found' });
     }
-    res.json(department);
+    res.json(rows[0]);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -28,9 +29,13 @@ router.get('/:id', async (req, res) => {
 // Create department
 router.post('/', async (req, res) => {
   try {
-    const department = new Department(req.body);
-    await department.save();
-    res.status(201).json(department);
+    const { name, code, description, head, contactEmail, contactPhone, building } = req.body;
+    const id = randomUUID();
+    await pool.query(
+      'INSERT INTO departments (id, name, code, description, head, contactEmail, contactPhone, building) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [id, name, code, description || null, head || null, contactEmail || null, contactPhone || null, building || null]
+    );
+    res.status(201).json({ id, name, code, description, head, contactEmail, contactPhone, building });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
