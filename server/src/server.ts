@@ -63,9 +63,28 @@ app.get('/health', (_req, res) => {
 });
 
 // 404 handler
-app.use((_req, res) => {
-    res.status(404).json({ error: 'Route not found' });
-});
+// 404 handler (API only) - move this below static files
+// app.use((_req, res) => {
+//     res.status(404).json({ error: 'Route not found' });
+// });
+
+import path from 'path';
+
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+    // Serve static files from the React app
+    app.use(express.static(path.join(__dirname, '../../client/build')));
+
+    // Handle React routing, return all requests to React app
+    app.get('*', (_req, res) => {
+        res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
+    });
+} else {
+    // In development or if not matching static files, 404 for API
+    app.use((_req, res) => {
+        res.status(404).json({ error: 'Route not found' });
+    });
+}
 
 // Error handler
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
