@@ -11,12 +11,11 @@ const Register = () => {
     password: '',
     confirmPassword: '',
     role: 'student',
-    department: '',
-    stream: ''
+    department: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -31,16 +30,7 @@ const Register = () => {
     'Public Health'
   ];
 
-  const streams = {
-    'Computer Science': ['Software Engineering', 'Data Science', 'Cybersecurity', 'AI/ML'],
-    'Engineering': ['Civil Engineering', 'Mechanical Engineering', 'Electrical Engineering', 'Biomedical Engineering'],
-    'Business Administration': ['Finance', 'Marketing', 'Management', 'Accounting'],
-    'Medicine': ['General Medicine', 'Surgery', 'Pediatrics', 'Cardiology'],
-    'Nursing': ['General Nursing', 'Pediatric Nursing', 'Critical Care', 'Community Health'],
-    'Education': ['Elementary Education', 'Secondary Education', 'Special Education', 'Educational Leadership'],
-    'Arts & Sciences': ['Biology', 'Chemistry', 'Physics', 'Mathematics', 'English', 'History'],
-    'Public Health': ['Epidemiology', 'Health Policy', 'Environmental Health', 'Biostatistics']
-  };
+
 
   const handleChange = (e) => {
     setFormData({
@@ -69,13 +59,13 @@ const Register = () => {
 
     const { confirmPassword, ...registrationData } = formData;
     const result = await register(registrationData);
-    
+
     if (result.success) {
       navigate('/dashboard');
     } else {
       setError(result.message);
     }
-    
+
     setLoading(false);
   };
 
@@ -85,9 +75,9 @@ const Register = () => {
         <div className="register-card card">
           <h2>Create Your Account</h2>
           <p className="subtitle">Join the UAB community today</p>
-          
+
           {error && <div className="alert alert-error">{error}</div>}
-          
+
           <form onSubmit={handleSubmit} className="register-form">
             <div className="form-group">
               <label htmlFor="role">Register As *</label>
@@ -115,7 +105,7 @@ const Register = () => {
                 placeholder="Enter your full name"
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="email">Email *</label>
               <input
@@ -128,7 +118,7 @@ const Register = () => {
                 placeholder="your.email@example.com"
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="username">Username *</label>
               <input
@@ -141,7 +131,7 @@ const Register = () => {
                 placeholder="Choose a username"
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="department">Department *</label>
               <select
@@ -158,24 +148,8 @@ const Register = () => {
               </select>
             </div>
 
-            {formData.role === 'student' && formData.department && (
-              <div className="form-group">
-                <label htmlFor="stream">Stream/Specialization *</label>
-                <select
-                  id="stream"
-                  name="stream"
-                  value={formData.stream}
-                  onChange={handleChange}
-                  required={formData.role === 'student'}
-                >
-                  <option value="">Select your stream</option>
-                  {streams[formData.department]?.map(stream => (
-                    <option key={stream} value={stream}>{stream}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-            
+
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="password">Password *</label>
@@ -189,7 +163,7 @@ const Register = () => {
                   placeholder="Min 6 characters"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="confirmPassword">Confirm Password *</label>
                 <input
@@ -203,12 +177,12 @@ const Register = () => {
                 />
               </div>
             </div>
-            
+
             <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
               {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
-          
+
           <div className="register-footer">
             <p>Already have an account? <Link to="/login">Sign in here</Link></p>
             <Link to="/" className="back-link">← Back to Home</Link>

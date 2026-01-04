@@ -5,9 +5,156 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+  /* Light grey background for the whole app */
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Card Styles */
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  transition: transform 0.2s;
+  border: 1px solid #f0f0f0;
+  border-top: 4px solid #1a472a;
+  /* Green accent */
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Input Styles */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #1a472a;
+  box-shadow: 0 0 0 2px rgba(26, 71, 42, 0.1);
+}
+
+/* Button Styles - UAB Theme */
+.btn {
+  border: none;
+  border-radius: 8px;
+  /* Slightly more rounded */
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+/* Primary - Solid Dark Green */
+.btn-primary {
+  background-color: #1a472a;
+  color: white;
+  border: 2px solid #1a472a;
+}
+
+.btn-primary:hover {
+  background-color: #143620;
+  border-color: #143620;
+}
+
+/* Secondary - Outlined Dark Green */
+.btn-secondary {
+  background-color: transparent;
+  color: #1a472a;
+  border: 2px solid #1a472a;
+}
+
+.btn-secondary:hover {
+  background-color: #f0f9f4;
+  /* Light green tint */
+}
+
+/* Danger - Outlined Red (or Solid depending on preference) */
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border: 2px solid #dc3545;
+}
+
+/* Let's make a specific Outline Danger */
+.btn-danger-outline {
+  background-color: transparent;
+  color: #dc3545;
+  border: 2px solid #dc3545;
+}
+
+.btn-danger-outline:hover {
+  background-color: #fff5f5;
+}
+
+/* Utility */
+.d-flex {
+  display: flex;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.fd-column {
+  flex-direction: column;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+/* Quick Actions List */
+.action-item {
+  padding: 16px;
+  border-top: 1px solid #c8e6c9;
+  /* Light green border */
+  cursor: pointer;
+  text-align: center;
+  color: #1a472a;
+  /* Green text */
+  transition: all 0.2s;
+  font-size: 15px;
+  font-weight: 700;
+  /* Bold */
+  background-color: #f0f9f4;
+  /* Light green background */
+}
+
+.action-item:hover {
+  background-color: #1a472a;
+  /* Solid green on hover */
+  color: white;
+  /* White text on hover */
+}
+
+.action-item:last-child {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }

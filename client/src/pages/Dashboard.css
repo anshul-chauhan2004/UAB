@@ -66,11 +66,26 @@
   font-size: 48px;
   color: #1e5128;
   margin-bottom: 10px;
+  font-weight: 800;
+  /* Extra Bold */
+}
+
+.stat-card.department-card h3 {
+  font-size: 24px;
+  word-wrap: break-word;
+  white-space: pre-line;
+  line-height: 1.2;
+  font-weight: 700;
 }
 
 .stat-card p {
-  color: #666;
+  color: #1a472a;
+  /* UAB Green */
   font-size: 16px;
+  font-weight: 700;
+  /* Bold */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .section {
@@ -106,10 +121,25 @@
   text-transform: uppercase;
 }
 
-.badge.general { background: #e3f2fd; color: #1976d2; }
-.badge.academic { background: #f3e5f5; color: #7b1fa2; }
-.badge.event { background: #e8f5e9; color: #388e3c; }
-.badge.urgent { background: #ffebee; color: #c62828; }
+.badge.general {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.badge.academic {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.badge.event {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.badge.urgent {
+  background: #ffebee;
+  color: #c62828;
+}
 
 .courses-grid {
   display: grid;
@@ -132,6 +162,8 @@
 .course-header h3 {
   color: #1e5128;
   font-size: 18px;
+  font-weight: 700;
+  /* Bold */
 }
 
 .credits {
@@ -140,13 +172,15 @@
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .course-card h4 {
   font-size: 20px;
   color: #333;
   margin: 0;
+  font-weight: 700;
+  /* Bold */
 }
 
 .course-card p {
@@ -397,10 +431,25 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.announcement-badge.general { background: #e3f2fd; color: #1976d2; }
-.announcement-badge.academic { background: #f3e5f5; color: #7b1fa2; }
-.announcement-badge.event { background: #e8f5e9; color: #388e3c; }
-.announcement-badge.urgent { background: #ffebee; color: #c62828; }
+.announcement-badge.general {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.announcement-badge.academic {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.announcement-badge.event {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.announcement-badge.urgent {
+  background: #ffebee;
+  color: #c62828;
+}
 
 @media (max-width: 768px) {
   .dashboard-header {
@@ -449,6 +498,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -471,6 +521,7 @@
     transform: translateY(30px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -563,37 +614,43 @@
 }
 
 /* Teacher and Student Cards */
-.teachers-grid, .students-grid {
+.teachers-grid,
+.students-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
   margin-top: 20px;
 }
 
-.teacher-card, .student-card {
+.teacher-card,
+.student-card {
   padding: 20px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.teacher-card:hover, .student-card:hover {
+.teacher-card:hover,
+.student-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.teacher-info h4, .student-info h4 {
+.teacher-info h4,
+.student-info h4 {
   margin: 0 0 8px 0;
   color: #1e5128;
   font-size: 18px;
 }
 
-.teacher-designation, .student-id {
+.teacher-designation,
+.student-id {
   color: #666;
   font-weight: 500;
   margin: 4px 0;
   font-size: 14px;
 }
 
-.teacher-department, .student-department {
+.teacher-department,
+.student-department {
   color: #2d7a3e;
   font-weight: 600;
   margin: 4px 0;
@@ -605,25 +662,29 @@
   margin: 4px 0;
 }
 
-.teacher-contact, .student-contact {
+.teacher-contact,
+.student-contact {
   margin: 12px 0;
   padding-top: 8px;
   border-top: 1px solid #eee;
 }
 
-.teacher-contact p, .student-contact p {
+.teacher-contact p,
+.student-contact p {
   margin: 4px 0;
   font-size: 14px;
   color: #666;
 }
 
-.teacher-courses, .student-stats {
+.teacher-courses,
+.student-stats {
   margin-top: 12px;
   padding-top: 8px;
   border-top: 1px solid #eee;
 }
 
-.teacher-courses small, .student-stats small {
+.teacher-courses small,
+.student-stats small {
   display: block;
   color: #888;
   margin: 2px 0;

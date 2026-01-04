@@ -20,8 +20,8 @@ const Home = () => {
         <div className="hero-content">
           <h1 className="hero-title">Welcome to UAB</h1>
           <p className="hero-text">
-            We're committed to supporting people across our community, city, 
-            state and world in education, research and patient care. Our world-class 
+            We're committed to supporting people across our community, city,
+            state and world in education, research and patient care. Our world-class
             university and academic health system are dedicated to improving the human experience.
           </p>
           <div className="hero-buttons">

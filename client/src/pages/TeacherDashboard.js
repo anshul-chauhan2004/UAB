@@ -1,170 +1,236 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import coursesData from '../data/courses.json';
-import * as DataManager from '../utils/dataManager';
+import axios from 'axios';
 import './Dashboard.css';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const TeacherDashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [teacherCourses, setTeacherCourses] = useState([]);
-  const [availableCourses, setAvailableCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('');
+
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [assignments, setAssignments] = useState([]);
+
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [showStudentList, setShowStudentList] = useState(false);
-  const [showAssignmentModal, setShowAssignmentModal] = useState(false);
-  const [showAssessmentModal, setShowAssessmentModal] = useState(false);
-  const [showAttendanceModal, setShowAttendanceModal] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const [showStudentModal, setShowStudentModal] = useState(false);
+  const [enrolledStudents, setEnrolledStudents] = useState([]);
+  const [showBrowseModal, setShowBrowseModal] = useState(false);
+  const [allCourses, setAllCourses] = useState([]);
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [editFormData, setEditFormData] = useState({ name: '', email: '' });
+  const [showAddAssignmentModal, setShowAddAssignmentModal] = useState(false);
+  const [newAssignmentData, setNewAssignmentData] = useState({
+    title: '',
+    description: '',
+    dueDate: '',
+    maxMarks: '100'
+  });
+  const [showViewAssignmentsModal, setShowViewAssignmentsModal] = useState(false);
+  const [viewAssignments, setViewAssignments] = useState([]);
 
   const fetchDashboardData = React.useCallback(async () => {
     try {
-      // Initialize data manager
-      DataManager.initializeData(coursesData);
-      
-      // Get teacher's courses from data manager
-      const teacherCoursesData = DataManager.getTeacherCourses(user.id);
-      setTeacherCourses(teacherCoursesData);
-      
-      // Set available courses from predefined list (courses.json)
-      setAvailableCourses(coursesData);
-      
-      // Get notifications
-      const userNotifications = DataManager.getUserNotifications(user.id);
-      setNotifications(userNotifications);
+      setLoading(true);
+
+      const coursesRes = await axios.get(`${API_URL}/api/courses`, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+
+      console.log('Courses response:', coursesRes.data);
+      setTeacherCourses(coursesRes.data.courses || []);
+
+      let total = 0;
+      const coursesList = coursesRes.data.courses || [];
+      for (const course of coursesList) {
+        try {
+          const enrollRes = await axios.get(`${API_URL}/api/enrollments/course/${course.id}`, {
+            headers: { Authorization: `Bearer ${user.token}` }
+          });
+          total += enrollRes.data.enrollments?.length || 0;
+        } catch (err) {
+          console.error('Error fetching enrollments for course:', course.id, err);
+        }
+      }
+      setTotalStudents(total);
+
+      const allAssignments = [];
+      for (const course of coursesList) {
+        try {
+          const assignRes = await axios.get(`${API_URL}/api/assignments?courseId=${course.id}`, {
+            headers: { Authorization: `Bearer ${user.token}` }
+          });
+          allAssignments.push(...(assignRes.data || []).map(a => ({ ...a, courseName: course.name })));
+        } catch (err) {
+          console.error('Error fetching assignments:', err);
+        }
+      }
+      setAssignments(allAssignments);
+
+
+
+
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      // Fallback to local data
-      setAvailableCourses(coursesData);
-      const teacherCoursesData = DataManager.getTeacherCourses(user.id);
-      setTeacherCourses(teacherCoursesData);
+      if (error.response?.status === 401) {
+        alert('Session expired. Please login again.');
+      }
     } finally {
       setLoading(false);
     }
-  }, [user.id]);
+  }, [user.token]);
 
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
-  const handleAddCourse = async (course) => {
-    try {
-      const result = DataManager.addTeacherCourse(user.id, course.id, {
-        teacherName: user.fullName,
-        teacherEmail: user.email
-      });
-      
-      if (!result.success) {
-        alert(result.message);
-        return;
-      }
+  const handleCreateCourse = async () => {
+    const code = prompt('Course Code (e.g., CS101):');
+    if (!code) return;
 
-      alert('Course added successfully!');
+    const name = prompt('Course Name:');
+    if (!name) return;
+
+    const description = prompt('Description:');
+    const semester = prompt('Semester (e.g., Fall):', 'Fall');
+    const year = prompt('Year:', '2024');
+
+    try {
+      await axios.post(`${API_URL}/api/courses`, {
+        code,
+        name,
+        description,
+        semester,
+        year: parseInt(year),
+        department: user.department
+      }, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+
+      alert('Course created successfully!');
       fetchDashboardData();
     } catch (error) {
-      alert('Failed to add course');
-      console.error(error);
+      alert('Failed to create course: ' + (error.response?.data?.error || error.message));
     }
   };
 
-  const handleRemoveCourse = (courseId) => {
-    DataManager.removeTeacherCourse(user.id, courseId);
-    alert('Course removed successfully!');
-    fetchDashboardData();
+  const handleBrowseCourses = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/courses?browse=true`, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+      setAllCourses(res.data.courses || []);
+      setShowBrowseModal(true);
+    } catch (error) {
+      alert('Failed to load courses: ' + (error.response?.data?.error || error.message));
+    }
   };
 
-  const getCourseEnrollmentCount = (courseId) => {
-    return DataManager.getCourseEnrollmentCount(courseId);
+  const handleAddCourse = async (courseId) => {
+    try {
+      await axios.post(`${API_URL}/api/courses/${courseId}/assign`, {}, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+
+      alert('Course added successfully!');
+      setShowBrowseModal(false);
+      fetchDashboardData(); // Refresh to show the new course
+    } catch (error) {
+      const errorMsg = error.response?.data?.error || error.message;
+      alert('Failed to add course: ' + errorMsg);
+    }
   };
 
-  const getDepartmentStudents = () => {
-    // Sample students data based on teacher's department
-    const allStudents = [
-      {
-        id: 'S001',
-        name: 'Alex Thompson',
-        studentId: 'UAB2024001',
-        department: 'Computer Science',
-        stream: 'Computer Science',
-        email: 'alex.thompson@student.uab.edu',
-        semester: 'Fall 2026',
-        enrolledCourses: 5
-      },
-      {
-        id: 'S002',
-        name: 'Maria Garcia',
-        studentId: 'UAB2024002',
-        department: 'Computer Science',
-        stream: 'Computer Science',
-        email: 'maria.garcia@student.uab.edu',
-        semester: 'Fall 2026',
-        enrolledCourses: 4
-      },
-      {
-        id: 'S003',
-        name: 'David Lee',
-        studentId: 'UAB2024003',
-        department: 'Computer Science',
-        stream: 'Computer Science',
-        email: 'david.lee@student.uab.edu',
-        semester: 'Fall 2026',
-        enrolledCourses: 6
-      },
-      {
-        id: 'S004',
-        name: 'Jennifer Wilson',
-        studentId: 'UAB2024004',
-        department: 'Electrical Engineering',
-        stream: 'Electrical Engineering',
-        email: 'jennifer.wilson@student.uab.edu',
-        semester: 'Fall 2026',
-        enrolledCourses: 5
-      },
-      {
-        id: 'S005',
-        name: 'Ryan Miller',
-        studentId: 'UAB2024005',
-        department: 'Mechanical Engineering',
-        stream: 'Mechanical Engineering',
-        email: 'ryan.miller@student.uab.edu',
-        semester: 'Fall 2026',
-        enrolledCourses: 4
-      },
-      {
-        id: 'S006',
-        name: 'Sarah Davis',
-        studentId: 'UAB2024006',
-        department: 'Civil Engineering',
-        stream: 'Civil Engineering',
-        email: 'sarah.davis@student.uab.edu',
-        semester: 'Fall 2026',
-        enrolledCourses: 5
-      }
-    ];
-    
-    // Filter students by teacher's department
-    return allStudents.filter(student => student.department === user.department);
+
+  const handleViewAssignments = async (course) => {
+    try {
+      const res = await axios.get(`${API_URL}/api/assignments?courseId=${course.id}`, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+      setViewAssignments(res.data || []);
+      setSelectedCourse(course);
+      setShowViewAssignmentsModal(true);
+    } catch (error) {
+      alert('Failed to load assignments: ' + (error.response?.data?.error || error.message));
+    }
   };
 
-  const viewEnrolledStudents = (course) => {
-    setSelectedCourse(course);
-    setShowStudentList(true);
+  const handleDeleteAssignment = async (assignmentId) => {
+    if (!window.confirm('Are you sure you want to delete this assignment?')) return;
+    try {
+      await axios.delete(`${API_URL}/api/assignments/${assignmentId}`, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+      setViewAssignments(viewAssignments.filter(a => a.id !== assignmentId));
+      alert('Assignment deleted successfully');
+    } catch (error) {
+      alert('Failed to delete assignment: ' + (error.response?.data?.error || error.message));
+    }
   };
 
-  const getEnrolledStudents = (courseId) => {
-    return DataManager.getEnrolledStudents(courseId);
+  const handleCreateAssignment = async (courseId) => {
+    const title = prompt('Assignment Title:');
+    if (!title) return;
+
+    const description = prompt('Description:');
+    const dueDate = prompt('Due Date (YYYY-MM-DD):', new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    const maxMarks = prompt('Max Marks:', '100');
+
+    try {
+      await axios.post(`${API_URL}/api/assignments`, {
+        courseId: courseId,
+        title,
+        description,
+        dueDate: dueDate,
+        maxMarks: parseInt(maxMarks)
+      }, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+
+      alert('Assignment created successfully!');
+      fetchDashboardData();
+    } catch (error) {
+      alert('Failed to create assignment: ' + (error.response?.data?.error || error.message));
+    }
   };
 
-  const filteredAvailableCourses = availableCourses.filter(course => {
-    const matchesSearch = course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.courseCode.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = !selectedDepartment || course.department === selectedDepartment;
-    return matchesSearch && matchesDepartment;
-  });
 
-  const departments = [...new Set(availableCourses.map(c => c.department))];
+
+  const handleViewStudents = async (course) => {
+    try {
+      const res = await axios.get(`${API_URL}/api/enrollments/course/${course.id}`, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+      setEnrolledStudents(res.data.enrollments || []);
+      setSelectedCourse(course);
+      setShowStudentModal(true);
+    } catch (error) {
+      alert('Failed to load students: ' + (error.response?.data?.error || error.message));
+    }
+  };
+
+
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(`${API_URL}/api/users/profile`, editFormData, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+
+      // Update local storage with new user data while preserving token
+      const updatedUser = { ...user, ...res.data.user };
+      sessionStorage.setItem('user', JSON.stringify(updatedUser));
+
+      alert('Profile updated successfully!');
+      setShowEditProfile(false);
+      window.location.reload();
+    } catch (error) {
+      alert('Failed to update profile: ' + (error.response?.data?.error || error.message));
+    }
+  };
 
   if (loading) {
     return (
@@ -179,114 +245,31 @@ const TeacherDashboard = () => {
     <div className="dashboard-page">
       <div className="container">
         <div className="dashboard-tabs">
-          <button 
-            className={`tab ${activeTab === 'overview' ? 'active' : ''}`}
-            onClick={() => setActiveTab('overview')}
-          >
-            Overview
-          </button>
-          <button 
-            className={`tab ${activeTab === 'my-courses' ? 'active' : ''}`}
-            onClick={() => setActiveTab('my-courses')}
-          >
-            My Courses
-          </button>
-          <button 
-            className={`tab ${activeTab === 'add-courses' ? 'active' : ''}`}
-            onClick={() => setActiveTab('add-courses')}
-          >
-            Add Courses
-          </button>
-          <button 
-            className={`tab ${activeTab === 'assignments' ? 'active' : ''}`}
-            onClick={() => setActiveTab('assignments')}
-          >
-            Assignments
-          </button>
-          <button 
-            className={`tab ${activeTab === 'assessments' ? 'active' : ''}`}
-            onClick={() => setActiveTab('assessments')}
-          >
-            Assessments
-          </button>
-          <button 
-            className={`tab ${activeTab === 'attendance' ? 'active' : ''}`}
-            onClick={() => setActiveTab('attendance')}
-          >
-            Attendance
-          </button>
-          <button 
-            className={`tab ${activeTab === 'notifications' ? 'active' : ''}`}
-            onClick={() => setActiveTab('notifications')}
-          >
-            Notifications {DataManager.getUnreadCount(user.id) > 0 && `(${DataManager.getUnreadCount(user.id)})`}
-          </button>
-          <button 
-            className={`tab ${activeTab === 'profile' ? 'active' : ''}`}
-            onClick={() => setActiveTab('profile')}
-          >
-            Profile
-          </button>
+          <button className={`tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Overview</button>
+          <button className={`tab ${activeTab === 'my-courses' ? 'active' : ''}`} onClick={() => setActiveTab('my-courses')}>My Courses</button>
+          <button className={`tab ${activeTab === 'assignments' ? 'active' : ''}`} onClick={() => setActiveTab('assignments')}>Assignments</button>
+
+          <button className={`tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>Profile</button>
         </div>
 
         <div className="dashboard-content">
           {activeTab === 'overview' && (
             <div className="overview-tab">
               <div className="stats-grid">
-                <div className="stat-card card">
-                  <h3>{teacherCourses.length}</h3>
-                  <p>My Courses</p>
-                </div>
-                <div className="stat-card card">
-                  <h3>{availableCourses.length}</h3>
-                  <p>Available Courses</p>
-                </div>
-                <div className="stat-card card">
-                  <h3>{teacherCourses.reduce((sum, c) => sum + (c.enrolled || 0), 0)}</h3>
-                  <p>Total Students</p>
-                </div>getCourseEnrollmentCount(c.id
-                <div className="stat-card card">
-                  <h3>{user.department}</h3>
-                  <p>Department</p>
-                </div>
+                <div className="stat-card card"><h3>{teacherCourses.length}</h3><p>My Courses</p></div>
+                <div className="stat-card card"><h3>{teacherCourses.length}</h3><p>Available Courses</p></div>
+                <div className="stat-card card"><h3>{totalStudents}</h3><p>Total Students</p></div>
+                <div className="stat-card card department-card"><h3>{user.department ? user.department.replace(/ /g, '\n') : 'N/A'}</h3><p>Department</p></div>
               </div>
-
               <div className="section">
-                <h2>Welcome, {user.fullName}!</h2>
-                <p className="teacher-info">
-                  Teacher ID: {user.teacherId} | Department: {user.department}
-                </p>
-                
+                <h2>Welcome, {user.name}!</h2>
+                <p className="teacher-info">Teacher ID: {user.id} | Department: {user.department}</p>
                 <div className="info-box card">
                   <h3>Quick Actions</h3>
-                  <ul>
-                    <li>Add new courses from the predefined course catalog</li>
-                    <li>Manage your existing courses</li>
-                    <li>View student enrollment statistics</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="section">
-                <h2>Department Students</h2>
-                <div className="students-grid">
-                  {getDepartmentStudents().map((student, index) => (
-                    <div key={student.id || index} className="student-card card">
-                      <div className="student-info">
-                        <h4>{student.name}</h4>
-                        <p className="student-id">ID: {student.studentId}</p>
-                        <p className="student-department">{student.department}</p>
-                        <p className="student-stream">Stream: {student.stream}</p>
-                        <div className="student-contact">
-                          <p>Email: {student.email}</p>
-                        </div>
-                        <div className="student-stats">
-                          <small>Enrolled Courses: {student.enrolledCourses || 0}</small>
-                          <small>Current Semester: {student.semester}</small>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    <button className="btn btn-primary" onClick={handleBrowseCourses} style={{ width: '100%' }}>Browse & Add Courses</button>
+                    <button className="btn btn-secondary" onClick={() => setActiveTab('assignments')} style={{ width: '100%' }}>Add / Edit Assignments</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -294,497 +277,22 @@ const TeacherDashboard = () => {
 
           {activeTab === 'my-courses' && (
             <div className="courses-tab">
-              <h2>My Added Courses</h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h2>My Courses</h2>
+                <button className="btn btn-primary" onClick={handleBrowseCourses}>Browse & Add Courses</button>
+              </div>
               {teacherCourses.length === 0 ? (
-                <div className="empty-state card">
-                  <p>You haven't added any courses yet.</p>
-                  <button 
-                    className="btn btn-primary"
-                    onClick={() => setActiveTab('add-courses')}
-                  >
-                    Add Courses
-                  </button>
-                </div>
+                <div className="empty-state card"><p>You haven't been assigned any courses yet.</p></div>
               ) : (
                 <div className="courses-grid">
-                  {teacherCourses.map(course => {
-                    const enrollmentCount = getCourseEnrollmentCount(course.id);
-                    return (
-                      <div key={course.id} className="course-card card">
-                        <div className="course-header">
-                          <h3>{course.courseCode}</h3>
-                          <span className="credits">{course.credits} Credits</span>
-                        </div>
-                        <h4>{course.courseName}</h4>
-                        <p>{course.description}</p>
-                        <div className="course-meta">
-                          <span> {course.department}</span>
-                          <span>‍ {course.instructor}</span>
-                          <span>{course.semester}</span>
-                        </div>
-                        <div className="enrollment-info" style={{ 
-                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                          color: 'white',
-                          padding: '10px',
-                          borderRadius: '8px',
-                          marginTop: '10px',
-                          fontWeight: 'bold'
-                        }}>
-                          <span>{enrollmentCount}/{course.capacity} enrolled</span>
-                        </div>
-                        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                          <button 
-                            className="btn btn-primary btn-sm"
-                            onClick={() => viewEnrolledStudents(course)}
-                            style={{ flex: 1 }}
-                          >
-                            View Students
-                          </button>
-                          <button 
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleRemoveCourse(course.id)}
-                            style={{ flex: 1 }}
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-              
-              {showStudentList && selectedCourse && (
-                <div className="modal-overlay" onClick={() => setShowStudentList(false)} style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: 'rgba(0, 0, 0, 0.7)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 1000
-                }}>
-                  <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{
-                    background: 'white',
-                    borderRadius: '12px',
-                    padding: '30px',
-                    maxWidth: '800px',
-                    width: '90%',
-                    maxHeight: '80vh',
-                    overflow: 'auto'
-                  }}>
-                    <div className="modal-header" style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      marginBottom: '20px',
-                      borderBottom: '2px solid #eee',
-                      paddingBottom: '15px'
-                    }}>
-                      <h3>Enrolled Students - {selectedCourse.courseName}</h3>
-                      <button 
-                        className="close-modal-btn"
-                        onClick={() => setShowStudentList(false)}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          fontSize: '28px',
-                          cursor: 'pointer',
-                          color: '#666'
-                        }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                    <div className="students-list">
-                      {getEnrolledStudents(selectedCourse.id).length === 0 ? (
-                        <p style={{ textAlign: 'center', color: '#666', padding: '40px' }}>
-                          No students enrolled yet.
-                        </p>
-                      ) : (
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                          <thead>
-                            <tr style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
-                              <th style={{ padding: '12px', textAlign: 'left' }}>Student Name</th>
-                              <th style={{ padding: '12px', textAlign: 'left' }}>Email</th>
-                              <th style={{ padding: '12px', textAlign: 'left' }}>Enrolled Date</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {getEnrolledStudents(selectedCourse.id).map((student, index) => (
-                              <tr key={index} style={{ 
-                                borderBottom: '1px solid #eee',
-                                background: index % 2 === 0 ? '#f9f9f9' : 'white'
-                              }}>
-                                <td style={{ padding: '12px' }}>{student.fullName}</td>
-                                <td style={{ padding: '12px' }}>{student.email}</td>
-                                <td style={{ padding: '12px' }}>
-                                  {new Date(student.enrolledDate).toLocaleDateString()}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+                  {teacherCourses.map(course => (
+                    <div key={course.id} className="course-card card">
+                      <div className="course-header"><h3>{course.code}</h3><span className="credits">{course.semester} {course.year}</span></div>
+                      <h4>{course.name}</h4>
+                      <p>{course.description}</p>
+                      <div style={{ display: 'flex', gap: '8px', marginTop: '15px', flexWrap: 'wrap' }}>
+                        <button className="btn btn-sm btn-primary" onClick={() => handleViewStudents(course)} style={{ flex: '1 1 auto', minWidth: '100px' }}>View Students</button>
 
-          {activeTab === 'add-courses' && (
-            <div className="browse-tab">
-              <h2>Add Courses from Catalog</h2>
-              
-              <div className="filters card">
-                <div className="filter-group">
-                  <input
-                    type="text"
-                    placeholder="Search courses..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="search-input"
-                  />
-                </div>
-                <div className="filter-group">
-                  <select
-                    value={selectedDepartment}
-                    onChange={(e) => setSelectedDepartment(e.target.value)}
-                    className="filter-select"
-                  >
-                    <option value="">All Departments</option>
-                    {departments.map(dept => (
-                      <option key={dept} value={dept}>{dept}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="courses-grid">
-                {filteredAvailableCourses.map(course => (
-                  <div key={course.id} className="course-card card">
-                    <div className="course-header">
-                      <h3>{course.courseCode}</h3>
-                      <span className="credits">{course.credits} Credits</span>
-                    </div>
-                    <h4>{course.courseName}</h4>
-                    <p>{course.description}</p>
-                    <div className="course-meta">
-                      <span> {course.department}</span>
-                      <span>‍ {course.instructor}</span>
-                      <span>{course.semester}</span>
-                    </div>
-                    <div className="enrollment-info">
-                      <span>Capacity: {course.capacity} students</span>
-                    </div>
-                    <button 
-                      className="btn btn-primary btn-sm"
-                      onClick={() => handleAddCourse(course)}
-                      disabled={teacherCourses.some(c => c.id === course.id)}
-                    >
-                      {teacherCourses.some(c => c.id === course.id) ? 'Already Added' : 'Add Course'}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'assignments' && (
-            <div className="assignments-tab">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2>Manage Assignments</h2>
-                <button 
-                  className="btn btn-primary"
-                  onClick={() => {
-                    if (teacherCourses.length === 0) {
-                      alert('Please add a course first');
-                      return;
-                    }
-                    const courseId = teacherCourses[0].id;
-                    const title = prompt('Assignment Title:');
-                    if (!title) return;
-                    const description = prompt('Description:');
-                    const dueDate = prompt('Due Date (YYYY-MM-DD):');
-                    const maxMarks = parseInt(prompt('Max Marks:') || '100');
-                    
-                    DataManager.createAssignment(user.id, courseId, {
-                      title, description, dueDate, maxMarks
-                    });
-                    alert('Assignment created successfully!');
-                    fetchDashboardData();
-                  }}
-                >
-                  + Create Assignment
-                </button>
-              </div>
-              
-              {teacherCourses.length === 0 ? (
-                <div className="empty-state card">
-                  <p>Add a course first to create assignments</p>
-                </div>
-              ) : (
-                teacherCourses.map(course => {
-                  const assignments = DataManager.getCourseAssignments(course.id);
-                  return (
-                    <div key={course.id} className="course-assignments" style={{ marginBottom: '30px' }}>
-                      <h3 style={{ borderBottom: '2px solid #eee', paddingBottom: '10px' }}>{course.courseName}</h3>
-                      {assignments.length === 0 ? (
-                        <p style={{ color: '#666', padding: '20px' }}>No assignments yet</p>
-                      ) : (
-                        <div className="courses-grid">
-                          {assignments.map(assignment => {
-                            const submissions = DataManager.getAssignmentSubmissions(assignment.id);
-                            const graded = submissions.filter(s => s.status === 'graded').length;
-                            return (
-                              <div key={assignment.id} className="card" style={{ padding: '20px' }}>
-                                <h4>{assignment.title}</h4>
-                                <p>{assignment.description}</p>
-                                <div style={{ fontSize: '14px', color: '#666', marginTop: '10px' }}>
-                                  <div>Due: {new Date(assignment.dueDate).toLocaleDateString()}</div>
-                                  <div>Max Marks: {assignment.maxMarks}</div>
-                                  <div>Submissions: {submissions.length}</div>
-                                  <div>Graded: {graded}/{submissions.length}</div>
-                                </div>
-                                <button 
-                                  className="btn btn-primary btn-sm"
-                                  style={{ marginTop: '10px' }}
-                                  onClick={() => {
-                                    alert(`Submissions: ${submissions.length}\\nGraded: ${graded}\\n\\nClick individual submissions to grade them.`);
-                                  }}
-                                >
-                                  View Submissions
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          )}
-
-          {activeTab === 'assessments' && (
-            <div className="assessments-tab">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2>Manage Assessments</h2>
-                <button 
-                  className="btn btn-primary"
-                  onClick={() => {
-                    if (teacherCourses.length === 0) {
-                      alert('Please add a course first');
-                      return;
-                    }
-                    const courseId = teacherCourses[0].id;
-                    const title = prompt('Assessment Title:');
-                    if (!title) return;
-                    const type = prompt('Type (quiz/test/exam/midterm/final):', 'quiz');
-                    const duration = parseInt(prompt('Duration (minutes):', '60'));
-                    const totalMarks = parseInt(prompt('Total Marks:', '100'));
-                    const startTime = prompt('Start Time (YYYY-MM-DD HH:MM):');
-                    
-                    DataManager.createAssessment(user.id, courseId, {
-                      title,
-                      type,
-                      duration,
-                      totalMarks,
-                      startTime: new Date(startTime).toISOString(),
-                      endTime: new Date(new Date(startTime).getTime() + duration * 60000).toISOString(),
-                      questions: [],
-                      instructions: 'Please read all questions carefully',
-                      description: `${type.toUpperCase()} - ${title}`
-                    });
-                    alert('Assessment created successfully!');
-                    fetchDashboardData();
-                  }}
-                >
-                  + Create Assessment
-                </button>
-              </div>
-              
-              {teacherCourses.length === 0 ? (
-                <div className="empty-state card">
-                  <p>Add a course first to create assessments</p>
-                </div>
-              ) : (
-                teacherCourses.map(course => {
-                  const assessments = DataManager.getCourseAssessments(course.id);
-                  return (
-                    <div key={course.id} className="course-assessments" style={{ marginBottom: '30px' }}>
-                      <h3 style={{ borderBottom: '2px solid #eee', paddingBottom: '10px' }}>{course.courseName}</h3>
-                      {assessments.length === 0 ? (
-                        <p style={{ color: '#666', padding: '20px' }}>No assessments yet</p>
-                      ) : (
-                        <div className="courses-grid">
-                          {assessments.map(assessment => {
-                            const attempts = DataManager.getAssessmentAttempts(assessment.id);
-                            const graded = attempts.filter(a => a.status === 'graded').length;
-                            return (
-                              <div key={assessment.id} className="card" style={{ padding: '20px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
-                                <h4>{assessment.title}</h4>
-                                <div style={{ fontSize: '14px', marginTop: '10px', opacity: 0.9 }}>
-                                  <div> Type: {assessment.type.toUpperCase()}</div>
-                                  <div>Duration: {assessment.duration} minutes</div>
-                                  <div>Total Marks: {assessment.totalMarks}</div>
-                                  <div>Start: {new Date(assessment.startTime).toLocaleString()}</div>
-                                  <div>Attempts: {attempts.length}</div>
-                                  <div>Graded: {graded}/{attempts.length}</div>
-                                </div>
-                                <button 
-                                  className="btn btn-secondary btn-sm"
-                                  style={{ marginTop: '10px', background: 'white', color: '#667eea' }}
-                                  onClick={() => {
-                                    alert(`Assessment: ${assessment.title}\\nAttempts: ${attempts.length}\\nGraded: ${graded}\\n\\nView detailed results in assessment portal.`);
-                                  }}
-                                >
-                                  View Results
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          )}
-
-          {activeTab === 'attendance' && (
-            <div className="attendance-tab">
-              <h2>Manage Attendance</h2>
-              {teacherCourses.length === 0 ? (
-                <div className="empty-state card">
-                  <p>Add a course first to manage attendance</p>
-                </div>
-              ) : (
-                teacherCourses.map(course => {
-                  const enrolledStudents = DataManager.getEnrolledStudents(course.id);
-                  return (
-                    <div key={course.id} className="course-attendance" style={{ marginBottom: '30px' }}>
-                      <h3 style={{ borderBottom: '2px solid #eee', paddingBottom: '10px' }}>{course.courseName}</h3>
-                      {enrolledStudents.length === 0 ? (
-                        <p style={{ color: '#666', padding: '20px' }}>No students enrolled</p>
-                      ) : (
-                        <div className="card" style={{ padding: '20px' }}>
-                          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                              <tr style={{ background: '#f5f5f5', borderBottom: '2px solid #ddd' }}>
-                                <th style={{ padding: '12px', textAlign: 'left' }}>Student Name</th>
-                                <th style={{ padding: '12px', textAlign: 'center' }}>Attendance %</th>
-                                <th style={{ padding: '12px', textAlign: 'center' }}>Actions</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {enrolledStudents.map((student, index) => {
-                                const percentage = DataManager.getAttendancePercentage(student.studentId, course.id);
-                                return (
-                                  <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-                                    <td style={{ padding: '12px' }}>{student.fullName}</td>
-                                    <td style={{ padding: '12px', textAlign: 'center' }}>
-                                      <span style={{ 
-                                        background: percentage >= 75 ? '#4caf50' : percentage >= 60 ? '#ff9800' : '#f44336',
-                                        color: 'white',
-                                        padding: '4px 12px',
-                                        borderRadius: '12px',
-                                        fontWeight: 'bold'
-                                      }}>
-                                        {percentage}%
-                                      </span>
-                                    </td>
-                                    <td style={{ padding: '12px', textAlign: 'center' }}>
-                                      <button 
-                                        className="btn btn-primary btn-sm"
-                                        onClick={() => {
-                                          DataManager.markAttendance(course.id, student.studentId, new Date().toISOString().split('T')[0], 'present');
-                                          alert('Attendance marked!');
-                                          fetchDashboardData();
-                                        }}
-                                        style={{ marginRight: '5px' }}
-                                      >
-                                        Present
-                                      </button>
-                                      <button 
-                                        className="btn btn-danger btn-sm"
-                                        onClick={() => {
-                                          const marks = parseInt(prompt('Enter marks (0-100):') || '0');
-                                          const maxMarks = parseInt(prompt('Out of:') || '100');
-                                          const type = prompt('Type (quiz/test/practical/participation):', 'quiz');
-                                          DataManager.addInternalMarks(course.id, student.studentId, {
-                                            type, marks, maxMarks, comments: ''
-                                          });
-                                          alert('Marks added!');
-                                          fetchDashboardData();
-                                        }}
-                                      >
-                                        Add Marks
-                                      </button>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          )}
-
-          {activeTab === 'notifications' && (
-            <div className="notifications-tab">
-              <h2>Notifications</h2>
-              {notifications.length === 0 ? (
-                <div className="empty-state card">
-                  <p>No notifications</p>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {notifications.map(notif => (
-                    <div 
-                      key={notif.id} 
-                      className="card" 
-                      style={{ 
-                        padding: '15px',
-                        background: notif.read ? '#f9f9f9' : 'white',
-                        borderLeft: notif.read ? '4px solid #ddd' : '4px solid #667eea'
-                      }}
-                      onClick={() => {
-                        DataManager.markNotificationRead(notif.id);
-                        fetchDashboardData();
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                        <div>
-                          <h4 style={{ margin: '0 0 5px 0' }}>{notif.title}</h4>
-                          <p style={{ margin: '5px 0', color: '#666' }}>{notif.message}</p>
-                          <small style={{ color: '#999' }}>
-                            {new Date(notif.createdAt).toLocaleString()}
-                          </small>
-                        </div>
-                        {!notif.read && (
-                          <span style={{
-                            background: '#667eea',
-                            color: 'white',
-                            padding: '4px 8px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            fontWeight: 'bold'
-                          }}>
-                            NEW
-                          </span>
-                        )}
                       </div>
                     </div>
                   ))}
@@ -793,46 +301,309 @@ const TeacherDashboard = () => {
             </div>
           )}
 
+          {activeTab === 'assignments' && (
+            <div className="assignments-tab">
+              <h2>My Courses - Assignments</h2>
+              <p style={{ marginBottom: '20px', color: '#666' }}>Select a course to add or view assignments.</p>
+              {teacherCourses.length === 0 ? (
+                <div className="empty-state card"><p>No courses assigned to you.</p></div>
+              ) : (
+                <div className="courses-grid">
+                  {teacherCourses.map(course => (
+                    <div key={course.id} className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                      <div>
+                        <h3>{course.code}</h3>
+                        <h4 style={{ color: '#1a472a', margin: '5px 0' }}>{course.name}</h4>
+                        <p style={{ fontSize: '14px', color: '#555' }}>{course.semester} {course.year}</p>
+                      </div>
+                      <div style={{ marginTop: 'auto' }}>
+                        <button
+                          className="btn btn-primary"
+                          style={{ width: '100%' }}
+                          onClick={() => {
+                            setSelectedCourse(course);
+                            setShowAddAssignmentModal(true);
+                          }}
+                        >
+                          + Add Assignment
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          style={{ width: '100%', marginTop: '10px' }}
+                          onClick={() => handleViewAssignments(course)}
+                        >
+                          View Posted
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+
+
           {activeTab === 'profile' && (
             <div className="profile-tab">
               <div className="profile-card card">
-                <h2>Profile Information</h2>
-                <div className="profile-info">
-                  <div className="info-row">
-                    <label>Full Name:</label>
-                    <span>{user?.fullName}</span>
-                  </div>
-                  <div className="info-row">
-                    <label>Email:</label>
-                    <span>{user?.email}</span>
-                  </div>
-                  <div className="info-row">
-                    <label>Username:</label>
-                    <span>{user?.username}</span>
-                  </div>
-                  <div className="info-row">
-                    <label>Teacher ID:</label>
-                    <span>{user?.teacherId}</span>
-                  </div>
-                  <div className="info-row">
-                    <label>Department:</label>
-                    <span>{user?.department}</span>
-                  </div>
-                  <div className="info-row">
-                    <label>Role:</label>
-                    <span className="role-badge">{user?.role}</span>
-                  </div>
-                  <div className="info-row">
-                    <label>Courses Teaching:</label>
-                    <span>{teacherCourses.length}</span>
-                  </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <h2>Profile Information</h2>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      setEditFormData({ name: user.name, email: user.email });
+                      setShowEditProfile(true);
+                    }}
+                  >
+                    Edit Profile
+                  </button>
                 </div>
-                <button className="btn btn-secondary">Edit Profile</button>
+                <div className="profile-info">
+                  <div className="info-row"><strong>Name:</strong><span>{user.name}</span></div>
+                  <div className="info-row"><strong>Email:</strong><span>{user.email}</span></div>
+                  <div className="info-row"><strong>Role:</strong><span>Teacher</span></div>
+                  <div className="info-row"><strong>Department:</strong><span>{user.department}</span></div>
+                  <div className="info-row"><strong>Teacher ID:</strong><span>{user.id}</span></div>
+                </div>
               </div>
             </div>
           )}
         </div>
       </div>
+
+      {showEditProfile && (
+        <div className="modal-overlay" onClick={() => setShowEditProfile(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ background: 'white', borderRadius: '12px', padding: '30px', maxWidth: '500px', width: '90%' }}>
+            <h3>Edit Profile</h3>
+            <form onSubmit={handleUpdateProfile}>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                  required
+                  style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
+                />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                  required
+                  style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditProfile(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Student Modal */}
+      {showStudentModal && selectedCourse && (
+        <div className="modal-overlay" onClick={() => setShowStudentModal(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ background: 'white', borderRadius: '12px', padding: '30px', maxWidth: '800px', width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <h3>Students - {selectedCourse.name}</h3>
+              <button onClick={() => setShowStudentModal(false)} style={{ background: 'transparent', border: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
+            </div>
+            {enrolledStudents.length === 0 ? (
+              <p>No students enrolled yet</p>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: '#f5f5f5', borderBottom: '2px solid #ddd' }}>
+                    <th style={{ padding: '12px', textAlign: 'left' }}>Student Name</th>
+                    <th style={{ padding: '12px', textAlign: 'left' }}>Email</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {enrolledStudents.map((enrollment, idx) => (
+                    <tr key={idx} style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '12px' }}>{enrollment.name || 'Student'}</td>
+                      <td style={{ padding: '12px' }}>{enrollment.email || 'N/A'}</td>
+
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Browse Courses Modal */}
+      {showBrowseModal && (
+        <div className="modal-overlay" onClick={() => setShowBrowseModal(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ background: 'white', borderRadius: '12px', padding: '30px', maxWidth: '900px', width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <h3>Browse Available Courses</h3>
+              <button onClick={() => setShowBrowseModal(false)} style={{ background: 'transparent', border: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
+            </div>
+            {allCourses.length === 0 ? (
+              <p>No courses available</p>
+            ) : (
+              <div className="courses-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                {allCourses.map(course => (
+                  <div key={course.id} className="card" style={{ padding: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                      <h4>{course.code}</h4>
+                      <span style={{ fontSize: '12px', color: '#666' }}>{course.semester} {course.year}</span>
+                    </div>
+                    <h5>{course.name}</h5>
+                    <p style={{ fontSize: '14px', color: '#666', marginTop: '10px' }}>{course.description}</p>
+                    <div style={{ marginTop: '10px', fontSize: '13px', color: '#888' }}>
+                      <div><strong>Department:</strong> {course.department}</div>
+                    </div>
+                    <button
+                      className="btn btn-primary btn-sm"
+                      style={{ marginTop: '15px', width: '100%' }}
+                      onClick={() => handleAddCourse(course.id)}
+                      disabled={teacherCourses.some(c => c.id === course.id)}
+                    >
+                      {teacherCourses.some(c => c.id === course.id) ? 'Already Teaching' : 'Add to My Courses'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Add Assignment Modal */}
+      {showAddAssignmentModal && selectedCourse && (
+        <div className="modal-overlay" onClick={() => setShowAddAssignmentModal(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ background: 'white', borderRadius: '12px', padding: '30px', maxWidth: '500px', width: '90%' }}>
+            <h3>Add Assignment - {selectedCourse.code}</h3>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                await axios.post(`${API_URL}/api/assignments`, {
+                  courseId: selectedCourse.id,
+                  title: newAssignmentData.title,
+                  description: newAssignmentData.description,
+                  dueDate: newAssignmentData.dueDate,
+                  maxMarks: parseInt(newAssignmentData.maxMarks)
+                }, {
+                  headers: { Authorization: `Bearer ${user.token}` }
+                });
+                alert('Assignment created successfully!');
+                setShowAddAssignmentModal(false);
+                setNewAssignmentData({ title: '', description: '', dueDate: '', maxMarks: '100' });
+                // fetchDashboardData(); // No need to refetch everything if we aren't showing the list immediately
+              } catch (error) {
+                alert('Failed to create assignment: ' + (error.response?.data?.error || error.message));
+              }
+            }}>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Title</label>
+                <input
+                  type="text"
+                  required
+                  className="form-control"
+                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                  value={newAssignmentData.title}
+                  onChange={(e) => setNewAssignmentData({ ...newAssignmentData, title: e.target.value })}
+                />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Description</label>
+                <textarea
+                  required
+                  className="form-control"
+                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px', minHeight: '100px' }}
+                  value={newAssignmentData.description}
+                  onChange={(e) => setNewAssignmentData({ ...newAssignmentData, description: e.target.value })}
+                />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Due Date</label>
+                <input
+                  type="date"
+                  required
+                  className="form-control"
+                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                  value={newAssignmentData.dueDate}
+                  onChange={(e) => setNewAssignmentData({ ...newAssignmentData, dueDate: e.target.value })}
+                />
+              </div>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Max Marks</label>
+                <input
+                  type="number"
+                  required
+                  className="form-control"
+                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                  value={newAssignmentData.maxMarks}
+                  onChange={(e) => setNewAssignmentData({ ...newAssignmentData, maxMarks: e.target.value })}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowAddAssignmentModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Create Assignment</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* View Assignments Modal */}
+      {showViewAssignmentsModal && selectedCourse && (
+        <div className="modal-overlay" onClick={() => setShowViewAssignmentsModal(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ background: 'white', borderRadius: '12px', padding: '30px', maxWidth: '600px', width: '90%', maxHeight: '80vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3>Assignments - {selectedCourse.code}</h3>
+              <button
+                onClick={() => setShowViewAssignmentsModal(false)}
+                style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#666' }}
+              >
+                &times;
+              </button>
+            </div>
+
+            {viewAssignments.length === 0 ? (
+              <p style={{ textAlign: 'center', color: '#666', padding: '20px' }}>No assignments posted for this course.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                {viewAssignments.map(assignment => (
+                  <div key={assignment.id} style={{ border: '1px solid #eee', borderRadius: '8px', padding: '15px', background: '#f9fafb' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <h4 style={{ margin: 0, color: '#2d3748' }}>{assignment.title}</h4>
+                      <span style={{ fontSize: '12px', padding: '4px 8px', background: '#e2e8f0', borderRadius: '12px' }}>
+                        Max Marks: {assignment.max_marks}
+                      </span>
+                    </div>
+                    {assignment.description && <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#4a5568' }}>{assignment.description}</p>}
+                    <div style={{ fontSize: '12px', color: '#718096', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Due: {new Date(assignment.due_date).toLocaleDateString()}</span>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        style={{ padding: '4px 8px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                        onClick={() => handleDeleteAssignment(assignment.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div style={{ marginTop: '20px', textAlign: 'right' }}>
+              <button className="btn btn-secondary" onClick={() => setShowViewAssignmentsModal(false)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

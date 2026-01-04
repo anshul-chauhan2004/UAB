@@ -29,17 +29,20 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (credentials) => {
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+  const login = React.useCallback(async (credentials) => {
     try {
       // Validate input
       if (!credentials.username || !credentials.password) {
         return { success: false, message: 'Please fill in all fields' };
       }
 
-      // Call backend for verification
-      const res = await axios.post('/api/auth/login', {
-        username: credentials.username,
-        password: credentials.password
+      // Call backend for verification - backend expects 'email' field
+      const res = await axios.post(`${API_URL}/api/auth/login`, {
+        email: credentials.username,  // Backend expects 'email' not 'username'
+        password: credentials.password,
+        role: credentials.role // Send role for validation
       });
 
       const { user: serverUser, token } = res.data;
@@ -48,22 +51,21 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.setItem('user', JSON.stringify(sessionUser));
       return { success: true };
     } catch (error) {
-      const message = error?.response?.data?.message || 'Login failed';
+      const message = error?.response?.data?.message || error?.response?.data?.error || 'Login failed';
       return { success: false, message };
     }
-  };
+  }, [API_URL]);
 
-  const register = async (userData) => {
+  const register = React.useCallback(async (userData) => {
     try {
       // Validate input
       if (!userData.fullName || !userData.email || !userData.username || !userData.password) {
         return { success: false, message: 'Please fill in all fields' };
       }
 
-      const res = await axios.post('/api/auth/register', {
-        fullName: userData.fullName,
+      const res = await axios.post(`${API_URL}/api/auth/register`, {
+        name: userData.fullName,  // Backend expects 'name' not 'fullName'
         email: userData.email,
-        username: userData.username,
         password: userData.password,
         role: userData.role || 'student',
         department: userData.department
@@ -78,12 +80,12 @@ export const AuthProvider = ({ children }) => {
       const message = error?.response?.data?.message || 'Registration failed';
       return { success: false, message };
     }
-  };
+  }, [API_URL]);
 
-  const logout = () => {
+  const logout = React.useCallback(() => {
     setUser(null);
     sessionStorage.removeItem('user');
-  };
+  }, []);
 
   const value = {
     user,
