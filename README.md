@@ -1,8 +1,129 @@
-# UAB Institute Management System 
+# UAB Institute Management System
 
-A modern, static React-based Institute Management System for The University of Alabama at Birmingham. Features comprehensive student/faculty dashboards, course management, authentication system, and dynamic announcements - all powered by client-side React with JSON data storage.
+A robust, full-stack **Institute Management System** built with **React, Node.js, Express, and MySQL**. This application features real-time updates via Socket.IO, role-based dashboards (Student & Teacher), and comprehensive course management.
 
-## 🚀 Major Features Added
+## 🚀 Key Features
+
+### 🎓 Student Dashboard
+- **Real-time Overview**: View enrolled courses, available credits, and department info.
+- **Course Management**: "My Courses" tab to view progress and assignments.
+- **Course Enrollment**: Browse and enroll in available courses with a single click.
+- **Profile Management**: View and edit personal profile details.
+- **Notifications**: Real-time alerts for new assignments or grades.
+
+### 👨‍🏫 Teacher Dashboard
+- **Course Claims**: Browse unassigned courses and "Claim" them to start teaching.
+- **Assignment Management**:
+    - **Add Assignments**: Create new assignments with due dates and max marks.
+    - **View/Delete**: Manage posted assignments directly from the dashboard.
+- **Student Tracking**: View specific student lists for each course.
+- **Quick Actions**: Rapidly access common tasks like course browsing or assignment creation.
+
+### 🔐 Security & Architecture
+- **JWT Authentication**: Secure login with token-based sessions.
+- **Role-Based Access Control (RBAC)**: Strict separation between Student and Teacher capabilities.
+- **Real-Time Updates**: Instant UI updates using **Socket.IO** (no page refreshes needed).
+- **MySQL Database**: Relational data modeling for users, courses, and enrollments.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React.js, Context API, CSS3 (Modular & Responsive).
+- **Backend**: Node.js, Express.js, TypeScript.
+- **Database**: MySQL.
+- **Real-Time**: Socket.IO.
+- **Deployment**: Railway (Single-service deployment serving both Client & Server).
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1. Prerequisites
+- Node.js (v16+)
+- MySQL Server (running locally or in the cloud)
+
+### 2. Clone the Repository
+```bash
+git clone https://github.com/anshul-chauhan2004/UAB.git
+cd UAB
+```
+
+### 3. Install Dependencies
+This project uses a unified build script, but for local development, install dependencies in both folders:
+```bash
+# Install root/server dependencies
+cd server && npm install
+
+# Install client dependencies
+cd ../client && npm install
+```
+
+### 4. Configure Environment Variables
+Create a `.env` file in the **server** directory (`server/.env`) with your MySQL credentials:
+
+```env
+PORT=5000
+CLIENT_URL=http://localhost:3000
+
+# MySQL Database Config
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=uab_lms
+DB_PORT=3306
+
+# Security
+JWT_SECRET=your_super_secret_key_here
+```
+
+### 5. Initialize Database
+Run the setup script to create tables and seed initial data:
+```bash
+cd server
+npm run db:setup
+# Optional: Seed dummy data
+npm run db:seed
+```
+
+### 6. Run the Application
+You can run both client and server concurrently from the root directory:
+```bash
+# From the project root
+npm run dev
+```
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:5000
+
+---
+
+## ☁️ Deployment (Railway)
+
+This project is configured for seamless deployment on **Railway.app**.
+
+1.  **Connect GitHub**: detailed in Railway documentation.
+2.  **Add Database**: Add a MySQL service in Railway.
+3.  **Configure Variables**: Add the following variables to your App Service in Railway:
+    *   `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_PORT`, `DB_NAME` (From your MySQL service)
+    *   `JWT_SECRET` (Any long random string)
+    *   `NODE_ENV` = `production`
+4.  **Deploy**: Railway will automatically build both the client and server using the included `package.json` scripts (`postinstall`, `build`).
+
+---
+
+## 🤝 Contributing
+
+1.  Fork the repository.
+2.  Create your feature branch: `git checkout -b feature/NewFeature`.
+3.  Commit your changes: `git commit -m 'Add NewFeature'`.
+4.  Push to the branch: `git push origin feature/NewFeature`.
+5.  Open a pull request.
+
+---
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).
 
 ### 1. **User Authentication System**
 - Demo authentication (accepts any username/password)
